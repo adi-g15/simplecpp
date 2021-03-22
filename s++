@@ -1,0 +1,2 @@
+#!/bin/sh -x
+g++ $@ -Wall /users/fac/ranade/simplecpp/lib/libsprite.a -I/users/fac/ranade/simplecpp/include -I/usr/include/X11 -L/usr/X11R6/lib -lX11 -std=c++11
