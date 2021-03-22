@@ -29,3 +29,15 @@ Simplecpp directory contains following subdirectories:
        src     : source files.  
 
 -----
+
+### Building
+
+```sh
+make s++
+```
+
+### Installing s++
+
+```
+make install
+```

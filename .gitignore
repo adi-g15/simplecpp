@@ -1,0 +1,4 @@
+# Don't track further changes to this
+lib/libsprite.a
+
+*.o
