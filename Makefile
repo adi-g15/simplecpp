@@ -36,6 +36,7 @@ HDRS =  include/spriteInterface.h \
 		include/simplecpp
 
 default: $(OBJS) $(HDRS)
+	mkdir -p lib
 	ar rcs lib/libsprite.a $(OBJS)
 
 s++: default

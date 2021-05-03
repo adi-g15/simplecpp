@@ -4,6 +4,9 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+
+#include <X11/Xlib.h>
+
 using namespace std;
 
 #ifndef PI

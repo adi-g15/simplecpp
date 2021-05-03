@@ -3,6 +3,12 @@
 #include <cstdlib>
 #include <thread>
 #include <chrono>
+#include <set>
+#include <X11/Xlib.h>
+
+#include "sprite.h"
+#include "canvas.h"
+#include "rectangle.h"
 
 using namespace std;
 
