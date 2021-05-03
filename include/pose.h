@@ -44,7 +44,7 @@ class Pose{
     return Position(a11*p.x+a12*p.y+a13, a21*p.x+a22*p.y+a23);
   }
 
-  void compute_res_vertex(XPoint* xpt, vector<Position> vertex, int count) const{
+  void compute_res_vertex(vector<XPoint>& xpt, const vector<Position>& vertex, int count) const{
     for(int i=0; i<count; i++)
       xpt[i] = prod(vertex[i]);
   }

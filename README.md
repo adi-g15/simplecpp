@@ -41,3 +41,7 @@ make s++
 ```
 make install
 ```
+
+### Future
+
+*[] To reduce dynamic allocations

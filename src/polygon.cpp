@@ -28,7 +28,7 @@ void Polygon::init(const double x, const double y,
 
 void Polygon::paint(Pose *p){
   if(visible && vertex.size()>0){
-    XPoint xpt_vertex[vertex.size()];
+    std::vector<XPoint> xpt_vertex(vertex.size());
     if(p){
       Pose r = Pose(*p,pose);
       r.compute_res_vertex(xpt_vertex, vertex, vertex.size());

@@ -1,12 +1,10 @@
 #include <simplecpp>
 #include <cstring>
 #include <cstdlib>
+#include <thread>
+#include <chrono>
 
 using namespace std;
-
-
-
-
 
 Display *display = NULL; // A connection to X server
 
@@ -62,9 +60,8 @@ namespace simplecpp{
   }
 
   void wait(float duration){
-    usleep((int) (duration*1000000));
+    std::this_thread::sleep_for( std::chrono::milliseconds( static_cast<long>(1000 * duration) ) );
   }
-
 
   int initCanvas(const char window_title[], int width, int height){
 
@@ -294,7 +291,7 @@ namespace simplecpp{
 
   }
 
-  void drawPolygon(XPoint *points, int npoints, Color fill_color, bool fill, unsigned int line_width, int line_style, int cap_style, int join_style, int fill_rule, int function){
+  void drawPolygon(vector<XPoint>& points, int npoints, Color fill_color, bool fill, unsigned int line_width, int line_style, int cap_style, int join_style, int fill_rule, int function){
 
     gc_vals.foreground = fill_color;
     gc_vals.line_width = line_width;
@@ -305,11 +302,11 @@ namespace simplecpp{
 
 
     if(fill)
-      XFillPolygon(display, curr_d, gc, points, npoints, 
+      XFillPolygon(display, curr_d, gc, points.data(), npoints, 
 		   Complex, CoordModeOrigin);
     else{
 
-      XPoint pts[npoints + 1];
+      vector<XPoint> pts(npoints + 1);
       int iter;
 
       // Create array with closed list
@@ -319,7 +316,7 @@ namespace simplecpp{
 
       pts[iter] = points[0];
 
-      XDrawLines(display, curr_d, gc, pts, npoints + 1, CoordModeOrigin);
+      XDrawLines(display, curr_d, gc, pts.data(), npoints + 1, CoordModeOrigin);
     }
 
     //XSync(display, false);

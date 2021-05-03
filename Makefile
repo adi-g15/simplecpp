@@ -5,7 +5,7 @@ SIGN = $
 AT = @
 
 # include -g here, if debug build wanted
-CXX_OPTS:= -Wall -std=c++11
+CXX_OPTS:= -Wall -std=c++11 -pedantic -Werror
 
 OBJS =  src/canvas.o \
 		src/polygon.o \
@@ -41,9 +41,11 @@ default: $(OBJS) $(HDRS)
 s++: default
 	echo "#!/bin/sh" > s++
 	# BUG - The '$@' MUST be in the s++ script too, but it's not, since it is being evaluated as empty ' '
-	echo "g++ \$@ -Wall " > makes++
-	rm makes++
-	echo 'g++ $@ -Wall -I/usr/include/simplecpp/include -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11` -std=c++11' >> s++
+	printf "g++ $$" > makes++
+	echo "@ -Wall " >> makes++
+
+	printf "g++ $$" >> s++
+	echo "@ -Wall -I/usr/include/simplecpp/include -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11` -std=c++11" >> s++
 	chmod a+x s++
 
 src/canvas.o: src/canvas.cpp include/canvas.h include/sprite.h include/common_def.h include/turtle.h

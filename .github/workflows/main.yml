@@ -1,0 +1,14 @@
+name: Build Status
+
+on: [push, pull_request]
+
+# Ubuntu latest build fail, since it can't find <filesystem>, even though C++17 standard
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: make
