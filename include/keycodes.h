@@ -99,3 +99,18 @@
 #define KeyCode_NUMPAD9 81
 #define KeyCode_NUMPADFULLSTOP 91
 
+
+#define MouseCode(event) ((event).xbutton.button)
+#define KeyCode(event) ((event).xkey.keycode)
+
+#define MouseCode_LEFT Button1
+#define MouseCode_RIGHT Button3
+#define MouseCode_CENTER Button2
+#define MouseCode_SCROLLDN Button4
+#define MouseCode_SCROLLUP Button5
+
+#define MousePosX(event) ((event).xbutton.x)
+#define MousePosY(event) ((event).xbutton.y)
+
+#define MouseTime(event) ((event).xbutton.time)
+#define KeyTime(event) ((event).xkey.time)
