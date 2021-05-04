@@ -3,5 +3,7 @@
 #include <thread>
 
 int main () {
-    turtleSim();
+    // turtleSim();
+    OpenGL_Win win;
+    win.init();
 }
