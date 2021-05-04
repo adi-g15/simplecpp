@@ -5,6 +5,8 @@
 #define PI 3.14159265358979323846
 #endif
 
+#include "opengl.hpp"
+
 namespace simplecpp{
   void turtleSim(const char* name="Turtle Simulator", int w=500, int h=500);
   void closeTurtleSim();

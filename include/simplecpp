@@ -20,6 +20,10 @@
 #include <vector>
 #include <cstring>
 
+#include "opengl.hpp"
+
+extern OpenGL_Win _simplecpp_global_object;
+
 #include "common_def.h"
 #include "spriteInterface.h"
 #include "sprite.h"

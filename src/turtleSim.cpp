@@ -14,8 +14,11 @@ void check(const char* msg){
 namespace simplecpp{
 
   void turtleSim(const char* name, int w, int h){
-    initCanvas(name,w,h);
-    _PsystemTurtle_=new Turtle;
+    std::cout << "TurtleSim called here" << std::endl;
+    _simplecpp_global_object.init();
+    std::cout << "TurtleSim done" << std::endl;
+    // initCanvas(name,w,h);
+    // _PsystemTurtle_=new Turtle;
   }
 
   void closeTurtleSim(){
