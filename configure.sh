@@ -24,6 +24,5 @@ echo "#!/bin/sh -x" >> s++
 echo "g++ \$@ -Wall "$SPRITE >> s++
 chmod +x s++
 
-
 echo "To compile use: "`pwd`"/s++ filename.cpp"
 

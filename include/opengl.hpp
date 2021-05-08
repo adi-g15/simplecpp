@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <thread>
+#include <array>
 
 inline void GLFWErrorCallback(int err_num, const char *err_desc)
 {
@@ -14,20 +15,22 @@ class OpenGL_Win
 {
     GLFWwindow *mWindow;
     std::thread mGameLoop;
+    std::array<GLfloat, 4> colors{ 1.0f, 0.0f, 0.0f, 1.0f };
     bool m_opengl_initialised = false;
 
 public:
     static bool already_destructed;
+    void change_color(const std::array<GLfloat, 4>& arr) {
+        colors = arr;
+    }
     void start_game_loop()
     {
         std::cout << "Start loop init" << std::endl;
-        glClearColor(1.0f, 0.5f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
         std::cout << "After clearColor" << std::endl;
         while (!glfwWindowShouldClose(mWindow))
         {
-            	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+        	glClearColor(colors[0], colors[1], colors[2], colors[3]);
+	        glClear(GL_COLOR_BUFFER_BIT);
             // std::cout << "Inside while" << std::endl;
             // glClear(GL_COLOR_BUFFER_BIT);
             // std::cout << "After glClear: " << mWindow << std::endl;
@@ -73,7 +76,19 @@ public:
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         std::cout << "Start init 5 -> " << this << std::endl;
-        mGameLoop = std::thread(&OpenGL_Win::start_game_loop, this);
+        while (!glfwWindowShouldClose(mWindow))
+        {
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            // std::cout << "Inside while" << std::endl;
+            // glClear(GL_COLOR_BUFFER_BIT);
+            // std::cout << "After glClear: " << mWindow << std::endl;
+            glfwSwapBuffers(mWindow);
+            // std::cout << "After glfwSwapBuffers: " << mWindow << std::endl;
+            glfwPollEvents();
+            // std::cout << "After glfwPollEvents" << std::endl;
+        }
+        //mGameLoop = std::thread(&OpenGL_Win::start_game_loop, this);
 
         std::cout << "init done" << std::endl;
         return true;

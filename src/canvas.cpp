@@ -1,3 +1,4 @@
+#if 0
 #include <simplecpp>
 #include <cstring>
 #include <cstdlib>
@@ -546,3 +547,4 @@ namespace simplecpp{
   }
 
 }
+#endif
