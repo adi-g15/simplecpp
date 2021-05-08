@@ -2,6 +2,8 @@
 
 Just `make install` to build and install the library, headers, and the `s++` script, which calls the C++ compiler with appropriate options.
 
+> Attribution- The original simplecpp package is available on https://cse.iitb.ac.in/~ranade/simplecpp and has been developed by [Prof. Abhiram Ranade](https://cse.iitb.ac.in/~ranade)
+
 ### s++
 
 s++ is the compiler for use with simplecpp, it simply is a script that takes care of the includes and linking libraries for you.
