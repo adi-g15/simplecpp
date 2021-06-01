@@ -52,3 +52,12 @@ build
 # End of https://www.toptal.com/developers/gitignore/api/c++
 
 .vscode
+
+## Arch makepkg
+
+simplecpp/
+src/simplecpp/
+pkg/
+*.tar.zst
+*.log
+
