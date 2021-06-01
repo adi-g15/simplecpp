@@ -72,16 +72,16 @@ src/sim.o: src/sim.cpp include/sim.h
 	g++ -c src/sim.cpp -o $@ ${INCLUDES} ${LIBS} ${CXX_OPTS}
 
 install: default s++
-	mkdir -p /usr/include/simplecpp/include \
-			   /usr/lib/simplecpp/
-	install -Dm 644 ${HDRS} /usr/include/simplecpp/include/
-	install -Dm 644 lib/libsprite.a /usr/lib/simplecpp/libsprite.a
-	install -Dm 755 s++ /usr/bin/s++
+	mkdir -p ${DESTDIR}/usr/include/simplecpp/include \
+			   ${DESTDIR}/usr/lib/simplecpp/
+	install -Dm 644 ${HDRS} -t ${DESTDIR}/usr/include/simplecpp/include/
+	install -Dm 644 lib/libsprite.a ${DESTDIR}/usr/lib/simplecpp/libsprite.a
+	install -Dm 755 s++ ${DESTDIR}/usr/bin/s++
 
 uninstall:
-	rm -rf /usr/include/simplecpp
-	rm -f /usr/lib/simplecpp/libsprite.a
-	rm -f /usr/bin/s++
+	rm -rf ${DESTDIR}/usr/include/simplecpp
+	rm -f ${DESTDIR}/usr/lib/simplecpp/libsprite.a
+	rm -f ${DESTDIR}/usr/bin/s++
 
 clean:
 	rm src/*.o lib/*.a

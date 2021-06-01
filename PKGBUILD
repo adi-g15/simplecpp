@@ -1,7 +1,7 @@
 # Maintainer: Aditya Gupta <ag15035@gmail.com>, Abhiram Ranade <ranade@iitb.ac.in>
 pkgname="simplecpp-git"
 pkgdesc="A simple 2D graphics library in C++"
-pkgver=r14.1aec18c
+pkgver=r13.35aa33c
 pkgrel=1
 arch=('x86_64')
 url="https://github.com/adi-g15/simplecpp"
@@ -32,9 +32,5 @@ build() {
 
 package() {
 	cd "$pkgname"
-	mkdir -p "$pkgdir/usr/include/simplecpp/include" \
-			   "$pkgdir/usr/lib/simplecpp/"
-	install -Dm 644 ${HDRS} "$pkgdir/usr/include/simplecpp/include/"
-	install -Dm 644 lib/libsprite.a "$pkgdir/usr/lib/simplecpp/libsprite.a"
-	install -Dm 755 s++ "$pkgdir/usr/bin/s++"
+	make DESTDIR="$pkgdir" install
 }
