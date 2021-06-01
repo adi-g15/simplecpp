@@ -1,0 +1,3 @@
+[submodule "packages/AUR_simplecpp-git"]
+	path = packages/AUR_simplecpp-git
+	url = ssh://aur@aur.archlinux.org/simplecpp-git.git
