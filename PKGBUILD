@@ -1,7 +1,7 @@
 # Maintainer: Aditya Gupta <ag15035@gmail.com>, Abhiram Ranade <ranade@iitb.ac.in>
 pkgname="simplecpp-git"
 pkgdesc="A simple 2D graphics library in C++"
-pkgver=r12.e42a679
+pkgver=r13.35aa33c
 pkgrel=1
 arch=('x86_64')
 url="https://github.com/adi-g15/simplecpp"
@@ -9,7 +9,9 @@ license=('CC')
 depends=('libx11' 'gcc')
 makedepends=('git')
 provides=("s++")
-source=('simplecpp::git://github.com/adi-g15/simplecpp.git')
+conflicts=("simplecpp")
+#source=('git://github.com/adi-g15/simplecpp.git#branch=dev')
+source=('git://github.com/adi-g15/simplecpp.git')
 md5sums=('SKIP')
 
 pkgver() {

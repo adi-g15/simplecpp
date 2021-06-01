@@ -1,9 +1,6 @@
 INCLUDES:= -Iinclude `pkg-config --cflags x11`
 LIBS:= `pkg-config --libs x11`
 
-SIGN = $
-AT = @
-
 # include -g here, if debug build wanted
 CXX_OPTS:= -Wall -std=c++11 -pedantic -Werror
 
@@ -40,13 +37,8 @@ default: $(OBJS) $(HDRS)
 	ar rcs lib/libsprite.a $(OBJS)
 
 s++: default
-	echo "#!/bin/sh" > s++
-	# BUG - The '$@' MUST be in the s++ script too, but it's not, since it is being evaluated as empty ' '
-	printf "g++ $$" > makes++
-	echo "@ -Wall " >> makes++
-
-	printf "g++ $$" >> s++
-	echo "@ -Wall -I/usr/include/simplecpp/include -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11` -std=c++11" >> s++
+	printf "#!/bin/sh\n" > s++
+	printf "g++ \$$@ -Wall -I/usr/include/simplecpp/include -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11` -std=c++11\n" >> s++
 	chmod a+x s++
 
 src/canvas.o: src/canvas.cpp include/canvas.h include/sprite.h include/common_def.h include/turtle.h
@@ -82,9 +74,9 @@ src/sim.o: src/sim.cpp include/sim.h
 install: default s++
 	mkdir -p /usr/include/simplecpp/include \
 			   /usr/lib/simplecpp/
-	cp ${HDRS} /usr/include/simplecpp/include/
-	cp lib/libsprite.a /usr/lib/simplecpp/libsprite.a
-	cp s++ /usr/bin/s++
+	install -Dm 644 ${HDRS} /usr/include/simplecpp/include/
+	install -Dm 644 lib/libsprite.a /usr/lib/simplecpp/libsprite.a
+	install -Dm 755 s++ /usr/bin/s++
 
 uninstall:
 	rm -rf /usr/include/simplecpp
