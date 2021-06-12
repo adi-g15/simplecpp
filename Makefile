@@ -32,13 +32,21 @@ HDRS =  include/spriteInterface.h \
 		include/sim.h \
 		include/simplecpp
 
-default: $(OBJS) $(HDRS)
+# $? returns the exit code of previously run command, and pkg-config returns 1 if a library is not found
+#check_deps:
+#	pkg-config --libs x11
+#	if [[ "$?"  "1" ]]; then
+#		printf "We couldn't find libx11 installed on your system. Please verify, or create a new bug issue in issues section :D"
+#	fi
+
+default: $(OBJS) $(HDRS) s++
 	mkdir -p lib
 	ar rcs lib/libsprite.a $(OBJS)
 
-s++: default
+s++:
 	printf "#!/bin/sh\n" > s++
-	printf "g++ \$$@ -Wall -I/usr/include/simplecpp/include -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11` -std=c++11\n" >> s++
+	printf "if [ \"\$$1\" = \"\" ]; then\necho \"ERROR: No input file\"\nexit 1\nfi\n" >> s++
+	printf "g++ \$$@ -Wall -I/usr/include/simplecpp -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11`\n" >> s++
 	chmod a+x s++
 
 src/canvas.o: src/canvas.cpp include/canvas.h include/sprite.h include/common_def.h include/turtle.h
@@ -72,9 +80,9 @@ src/sim.o: src/sim.cpp include/sim.h
 	g++ -c src/sim.cpp -o $@ ${INCLUDES} ${LIBS} ${CXX_OPTS}
 
 install: default s++
-	mkdir -p ${DESTDIR}/usr/include/simplecpp/include \
+	mkdir -p ${DESTDIR}/usr/include/simplecpp/ \
 			   ${DESTDIR}/usr/lib/simplecpp/
-	install -Dm 644 ${HDRS} -t ${DESTDIR}/usr/include/simplecpp/include/
+	install -Dm 644 ${HDRS} -t ${DESTDIR}/usr/include/simplecpp/
 	install -Dm 644 lib/libsprite.a ${DESTDIR}/usr/lib/simplecpp/libsprite.a
 	install -Dm 755 s++ ${DESTDIR}/usr/bin/s++
 
