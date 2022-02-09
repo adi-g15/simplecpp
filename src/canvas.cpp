@@ -71,7 +71,14 @@ int initCanvas(const char window_title[], int width, int height) {
 
     int argc = 0;
     char **argv = {};
-    glutInit(&argc, argv);
+    // Calling glutGet for GLUT_INIT_STATE is safe, even before any glutInit calls
+    bool already_init = glutGet(GLUT_INIT_STATE) != 0;
+    if (!already_init) {
+        glutInit(&argc, argv);
+    } else {
+        // WARN: Already initialised, nothing to do
+        // This should not be the case, and initCanvas must be called only once, but handling this case for backward compatibility
+    }
 
     // @remove
     display = XOpenDisplay(nullptr); // Connect X server by opening a display
@@ -90,9 +97,16 @@ int initCanvas(const char window_title[], int width, int height) {
 
     glutInitWindowSize(screen_width, screen_height);
 
-    if (glutCreateWindow(window_title) == 0) {
-        cerr << "Unable to create window\n";
-        return 1;
+    if(!already_init) {
+        if (glutCreateWindow(window_title) == 0) {
+            cerr << "Unable to create window\n";
+            return 1;
+        }
+    } else {
+        // Already init, instead of creating a new window, set properties on existing itself
+        glutSetWindowTitle(window_title);
+        glClearColor(1, 1, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     { // Initialise

@@ -105,36 +105,34 @@ struct erase {
 int main(int argc, char **argv) {
 
     turtleSim("Raagmaalaa", 1000, 800); // big canvas
-
     hide();
-
-    //    wait(30);
-
     saraswati();
-    wait(0.3);
+    getClick();
 
     erase::droplets(COLOR("blue"));
 
     resetTurtle();
     hide(false);
     plate();
+    getClick();
 
-    wait(0.3);
     erase::bars(COLOR("yellow"));
 
     resetTurtle();
     hide();
     rotSquares();
-    wait(0.3);
+    getClick();
 
-    erase::spiral(COLOR("pink"));
-    resetTurtle();
-    hide();
+    // erase::spiral(COLOR("pink"));
+    // resetTurtle();
+    // hide();
 
     realtree();
 
-    erase::squeeze(COLOR("green"));
-    chakra();
+    // erase::squeeze(COLOR("green"));
+    // chakra();
 
-    anar();
+    // anar();
+
+    getClick();
 }
