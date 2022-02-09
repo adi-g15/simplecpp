@@ -2,6 +2,7 @@
 #define _CANVAS_INCLUDED
 
 #include <string>
+#include <vector>
 
 #include "sprite.h"
 
@@ -19,8 +20,6 @@ int initCanvas(const char window_title[] = "Simplecpp Canvas", int w = 500,
 
 void closeCanvas();
 
-int canvas_width(); // return the width of the canvas
-int canvas_height();
 int textWidth(string text);
 int textWidth(char op);
 int textHeight();

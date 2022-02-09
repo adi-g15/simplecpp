@@ -1,5 +1,8 @@
 #include "simplecpp"
 
+extern int screen_width;
+extern int screen_height;
+
 Turtle *_PsystemTurtle_;
 
 void check(const char *msg) {
@@ -19,8 +22,7 @@ void turtleSim(const char *name, int w, int h) {
 void closeTurtleSim() { closeCanvas(); }
 
 void resetTurtle() {
-    _PsystemTurtle_->Sprite::reset(static_cast<double>(canvas_width()) / 2,
-                                   static_cast<double>(canvas_height()) / 2);
+    _PsystemTurtle_->Sprite::reset(screen_width / 2.0f, screen_height / 2.0f);
 }
 
 void hide(bool state) {

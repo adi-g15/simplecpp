@@ -1,8 +1,9 @@
 INCLUDES:= -Iinclude `pkg-config --cflags x11`
-LIBS:= `pkg-config --libs x11`
+LIBS:= `pkg-config --libs x11 glut glu`
 
 # include -g here, if debug build wanted
-CXX_OPTS:= -Wall -std=c++11 -pedantic -Werror
+# // TODO: REMOVE -g
+CXX_OPTS:= -g -Wall -std=c++11 -pedantic -Werror
 
 OBJS =  src/canvas.o \
 		src/polygon.o \
@@ -46,7 +47,7 @@ default: $(OBJS) $(HDRS) s++
 s++:
 	printf "#!/bin/sh\n" > s++
 	printf "if [ \"\$$1\" = \"\" ]; then\necho \"ERROR: No input file\"\nexit 1\nfi\n" >> s++
-	printf "g++ \$$@ -Wall -I/usr/include/simplecpp -L/usr/lib/simplecpp -lsprite `pkg-config --cflags --libs x11`\n" >> s++
+	printf "g++ \$$@ -Wall -I/usr/local/include/simplecpp -L/usr/local/lib/simplecpp -lsprite `pkg-config --cflags --libs x11 glut glu`\n" >> s++
 	chmod a+x s++
 
 src/canvas.o: src/canvas.cpp include/canvas.h include/sprite.h include/common_def.h include/turtle.h
@@ -92,4 +93,4 @@ uninstall:
 	rm -f ${DESTDIR}/usr/bin/s++
 
 clean:
-	rm src/*.o lib/*.a
+	rm src/*.o lib/*.a s++
