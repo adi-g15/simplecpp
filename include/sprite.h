@@ -16,7 +16,6 @@ class Sprite : public virtual SpriteInterface {
     Pose pose;
     bool visible;
     Color color;
-    OpenGLColor colorRGB = {0,1.0,0};
     bool fill;
     void init(Composite *owner);
     bool penIsDown;
@@ -24,10 +23,10 @@ class Sprite : public virtual SpriteInterface {
   public:
     Sprite(const Sprite &other);
     Sprite &operator=(const Sprite &);
-    Sprite(Composite* owner = nullptr);
-    Sprite(double dx, double dy, Composite* owner = nullptr);
+    Sprite(Composite *owner = nullptr);
+    Sprite(double dx, double dy, Composite *owner = nullptr);
     virtual ~Sprite();
-    void reset(double dx, double dy, Composite* owner = nullptr);
+    void reset(double dx, double dy, Composite *owner = nullptr);
 
     virtual void forward(double distance);
     virtual void penDown(bool = true);
@@ -39,7 +38,7 @@ class Sprite : public virtual SpriteInterface {
     virtual double getOrientation() const { return pose.getOrientation(); }
     virtual double getScale() const { return pose.getScale(); }
 
-    virtual void paint(Pose* p = nullptr){};
+    virtual void paint(Pose *p = nullptr){};
     virtual void show();
     virtual void hide();
     virtual void rotate(double angle);
@@ -51,7 +50,6 @@ class Sprite : public virtual SpriteInterface {
     virtual void moveTo(double x, double y, bool repaintP = true);
     virtual void print(string msg = "") { cout << msg << " Undefined.\n"; }
     Sprite &setColor(Color c, bool repaintP = true);
-    Sprite &setColor(OpenGLColor c, bool repaintP = true);
     void setFill(bool v = true, bool repaintP = true);
     void imprint(bool repaintP = true);
     virtual Position getOrigin() const { return pose.getOrigin(); }

@@ -5,6 +5,7 @@
 #include <GL/freeglut_std.h>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 
 #include <X11/Xlib.h>
@@ -20,7 +21,10 @@ struct Position {
     double x, y;
 
   public:
-    Position() { x = 0.0; y = 0.0; }
+    Position() {
+        x = 0.0;
+        y = 0.0;
+    }
     Position(double x1, double y1) {
         x = x1;
         y = y1;
@@ -37,21 +41,22 @@ struct Position {
     }
 };
 
-// ONLY TO MAINTAIN COMPATIBILITY, previously since X11 was used, it's y coordinate is 0 at top and increases downwards.
-// While in OpenGL, y coordinate is 0 at bottom, and increases upwards
-// So changing y to be same as what would it be if top is y=0
+// ONLY TO MAINTAIN COMPATIBILITY, previously since X11 was used, it's y
+// coordinate is 0 at top and increases downwards. While in OpenGL, y coordinate
+// is 0 at bottom, and increases upwards So changing y to be same as what would
+// it be if top is y=0
 // @adi - Remove this once completely moved
-static void MakePositionOpenGLCompatible(Position& p) {
+static void MakePositionOpenGLCompatible(Position &p) {
     p.y = glutGet(GLUT_WINDOW_HEIGHT) - p.y;
 }
 // @adi - Remove this once completely moved
-static void MakePositionOpenGLCompatible(XPoint& p) {
+static void MakePositionOpenGLCompatible(XPoint &p) {
     p.y = glutGet(GLUT_WINDOW_HEIGHT) - p.y;
 }
-static void MakePositionOpenGLCompatible(int& y) {
+static void MakePositionOpenGLCompatible(int &y) {
     y = glutGet(GLUT_WINDOW_HEIGHT) - y;
 }
-static void MakePositionOpenGLCompatible(short& y) {
+static void MakePositionOpenGLCompatible(short &y) {
     y = glutGet(GLUT_WINDOW_HEIGHT) - y;
 }
 
@@ -79,8 +84,19 @@ struct RectBox {
     }
 };
 
-using Color = unsigned long;
 // primitive array (float[3]) cannot be assigned again (wholly)
-using OpenGLColor = array<float, 3>;
+using u8 = uint8_t;
+
+struct Color {
+    u8 r = 127;
+    u8 g = 127;
+    u8 b = 127;
+
+    Color(unsigned int r, unsigned int g, unsigned int b) : r(r), g(g), b(b) {}
+
+    // For backward compatibility with X APIs
+    operator unsigned long() { return r << 16 | g << 8 | b; }
+};
+
 } // namespace simplecpp
 #endif

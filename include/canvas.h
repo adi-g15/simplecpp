@@ -10,16 +10,13 @@
 
 using std::string;
 
-// @WARN Do NOT use these, only for compatiblity purpose with sir's code in examples
-static int canvas_width() {
-    return glutGet(GLUT_SCREEN_WIDTH);
-}
+// @WARN Do NOT use these, only for compatiblity purpose with sir's code in
+// examples
+static int canvas_width() { return glutGet(GLUT_SCREEN_WIDTH); }
 
-static int canvas_height() {
-    return glutGet(GLUT_SCREEN_HEIGHT);
-}
+static int canvas_height() { return glutGet(GLUT_SCREEN_HEIGHT); }
 
-namespace simplecpp {    
+namespace simplecpp {
 double randuv(double u, double v);
 //  void srand(unsigned int);
 void wait(float duration);
@@ -44,28 +41,28 @@ Color COLOR(const char *color_string); // creates a colour.
 Color COLOR(unsigned int red, unsigned int green, unsigned int blue);
 
 void imprintLine(short x1, short y1, short x2, short y2,
-                 Color line_color = COLOR(0, 0, 0), OpenGLColor fill_color_rgb = {0,0,0},
+                 Color line_color = COLOR(0, 0, 0),
                  unsigned int line_width = 2);
 // paints the line into the the background
 
 /* draw... : draw ... onto the current buffer. */
 
-void drawLine(XPoint start, XPoint end, Color line_color, OpenGLColor fill_color_rgb,
+void drawLine(XPoint start, XPoint end, Color line_color,
               unsigned int line_width = 0);
 
-void drawPoint(XPoint point, Color point_color, OpenGLColor fill_color_rgb, int function = GXcopy);
+void drawPoint(XPoint point, Color point_color, int function = GXcopy);
 
-void drawCircle(XPoint centre, int radius, Color fill_color, OpenGLColor fill_color_rgb, bool fill = true,
+void drawCircle(XPoint centre, int radius, Color fill_color, bool fill = true,
                 unsigned int line_width = 0, int line_style = LineSolid,
                 int cap_style = CapButt, int join_style = JoinMiter,
                 int function = GXcopy);
 
-void drawEllipse(XPoint centre, int width, int height, Color fill_color, OpenGLColor fill_color_rgb,
+void drawEllipse(XPoint centre, int width, int height, Color fill_color,
                  bool fill = true, unsigned int line_width = 1,
                  int line_style = LineSolid, int cap_style = CapButt,
                  int join_style = JoinMiter, int function = GXcopy);
 
-void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color, OpenGLColor fill_color_rgb,
+void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
                  bool fill = true, unsigned int line_width = 0,
                  int line_style = LineSolid, int cap_style = CapButt,
                  int join_style = JoinMiter, int fill_rule = WindingRule,
@@ -73,8 +70,8 @@ void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color, OpenGLCo
 
 //  void drawText(XPoint position, const char *text, Color clr);
 //  void drawText(Position position, string text, Color clr);
-void drawText(float x, float y, string text, Color clr, OpenGLColor clr_rgb);
-void drawText(XPoint position, string message, Color clr, OpenGLColor clr_rgb);
+void drawText(float x, float y, string text, Color clr);
+void drawText(XPoint position, string message, Color clr);
 
 void c_imprint(Sprite *s); // paints *s into the background
 void repaint();    // paint the current screen into new buffer, then transfer.
@@ -90,7 +87,7 @@ char charFromEvent(XEvent &event); // return char whose key was pressed.
 bool checkEvent(XEvent &event);
 // true if some event happened since last nextEvent.
 
-void echoKey(XEvent &event, Color clr = Color("blue"), OpenGLColor clr_rgb = {0,0,1}); // print value on screen
+void echoKey(XEvent &event, Color clr = COLOR("blue")); // print value on screen
 void spriteStatus();
 int getClick(); // wait for a click, and return xclickpos*65536+yclickpos.
 } // namespace simplecpp

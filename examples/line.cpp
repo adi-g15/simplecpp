@@ -12,7 +12,7 @@ int main() {
 
     forward(100);
 
-    drawCircle({200, 200}, 40, COLOR("red"), {1, 0, 0} /*red*/);
+    drawCircle({200, 200}, 40, COLOR("red"));
 
     spriteStatus();
     glutCloseFunc([]() { std::cout << "Should close;" << std::endl; });

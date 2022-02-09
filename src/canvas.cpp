@@ -1,6 +1,7 @@
 #include <GL/freeglut.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <cctype>
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
@@ -71,13 +72,15 @@ int initCanvas(const char window_title[], int width, int height) {
 
     int argc = 0;
     char **argv = {};
-    // Calling glutGet for GLUT_INIT_STATE is safe, even before any glutInit calls
+    // Calling glutGet for GLUT_INIT_STATE is safe, even before any glutInit
+    // calls
     bool already_init = glutGet(GLUT_INIT_STATE) != 0;
     if (!already_init) {
         glutInit(&argc, argv);
     } else {
         // WARN: Already initialised, nothing to do
-        // This should not be the case, and initCanvas must be called only once, but handling this case for backward compatibility
+        // This should not be the case, and initCanvas must be called only once,
+        // but handling this case for backward compatibility
     }
 
     // @remove
@@ -97,13 +100,14 @@ int initCanvas(const char window_title[], int width, int height) {
 
     glutInitWindowSize(screen_width, screen_height);
 
-    if(!already_init) {
+    if (!already_init) {
         if (glutCreateWindow(window_title) == 0) {
             cerr << "Unable to create window\n";
             return 1;
         }
     } else {
-        // Already init, instead of creating a new window, set properties on existing itself
+        // Already init, instead of creating a new window, set properties on
+        // existing itself
         glutSetWindowTitle(window_title);
         glClearColor(1, 1, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -175,7 +179,6 @@ int initCanvas(const char window_title[], int width, int height) {
     Rectangle r(screen_width / 2.0, screen_height / 2.0, screen_width,
                 screen_height);
     r.setColor(COLOR("white"));
-    r.setColor({1,1,1} /*white*/);
     r.setFill();
     r.imprint();
 
@@ -193,7 +196,7 @@ void closeCanvas() {
     spriteSet.clear(); // Delete all elements from set
 }
 
-void drawLine(XPoint start, XPoint end, Color line_color, OpenGLColor line_color_rgb,
+void drawLine(XPoint start, XPoint end, Color line_color,
               unsigned int line_width) {
 
     // @remove
@@ -205,16 +208,16 @@ void drawLine(XPoint start, XPoint end, Color line_color, OpenGLColor line_color
     MakePositionOpenGLCompatible(start);
     MakePositionOpenGLCompatible(end);
     glLineWidth(line_width);
-    glColor3f(line_color_rgb[0], line_color_rgb[1], line_color_rgb[2]);
+    glColor3b(line_color.r, line_color.g, line_color.b);
     // Draw line
     glBegin(GL_LINES);
-        glVertex2d(start.x, start.y);
-        glVertex2d(end.x, end.y);
+    glVertex2d(start.x, start.y);
+    glVertex2d(end.x, end.y);
     glEnd();
     glFlush();
 }
 
-void imprintLine(short x1, short y1, short x2, short y2, Color line_color, OpenGLColor line_color_rgb,
+void imprintLine(short x1, short y1, short x2, short y2, Color line_color,
                  unsigned int line_width) {
 
     // @remove
@@ -232,34 +235,45 @@ void imprintLine(short x1, short y1, short x2, short y2, Color line_color, OpenG
     MakePositionOpenGLCompatible(y1);
     MakePositionOpenGLCompatible(y2);
     glLineWidth(line_width);
-    glColor3f(line_color_rgb[0], line_color_rgb[1], line_color_rgb[2]);
+    glColor3b(line_color.r, line_color.g, line_color.b);
     // Draw line from (x1,y1) to (x2,y2)
     glBegin(GL_LINES);
-        glVertex2d(x1, y1);
-        glVertex2d(x2, y2);
+    glVertex2d(x1, y1);
+    glVertex2d(x2, y2);
     glEnd();
     glFlush();
 }
 
-// TODO: Modify this to return {float, float, float} instead, DONT DELETE THIS, this is part of exported API
+// TODO: Modify this to return {float, float, float} instead, DONT DELETE THIS,
+// this is part of exported API
 Color COLOR(const char *color_string) {
-    if (!display) {
-        cout << "You must first call initCanvas before "
-             << "using any graphics features.\n";
-        exit(1);
+    string s(color_string);
+    for (auto &c : s) {
+        c = tolower(c);
     }
-    XColor screen_color, true_color;
-    XAllocNamedColor(display, cmap, color_string, &screen_color, &true_color);
 
-    return screen_color.pixel;
+    // TODO: Add more common colors here, for example see ncurses colours
+    if (s == "red") {
+        return {255, 0, 0};
+    } else if (s == "green") {
+        return {0, 255, 0};
+    } else if (s == "blue") {
+        return {0, 0, 255};
+    } else if (s == "white") {
+        return {255, 255, 255};
+    } else if (s == "black") {
+        return {0, 0, 0};
+    } else {
+        cout << "Warning: Don't know the colour: " << color_string << '\n';
+        return {127, 127, 127}; /*DEFAULT_COLOR*/
+    }
 }
 
 Color COLOR(unsigned int red, unsigned int green, unsigned int blue) {
-    Color clr = red << 16 | green << 8 | blue;
-    return clr;
+    return {red, green, blue};
 }
 
-void drawPoint(XPoint point, Color point_color, OpenGLColor point_color_rgb, int function) {
+void drawPoint(XPoint point, Color point_color, int function) {
     // @remove
     gc_vals.foreground = point_color;
     XChangeGC(display, gc, GCForeground, &gc_vals);
@@ -268,15 +282,15 @@ void drawPoint(XPoint point, Color point_color, OpenGLColor point_color_rgb, int
     XSync(display, false);
 
     MakePositionOpenGLCompatible(point);
-    glColor3f(point_color_rgb[0], point_color_rgb[1], point_color_rgb[2]);
+    glColor3b(point_color.r, point_color.g, point_color.b);
     // Draw point (point.x, point.y)
     glBegin(GL_POINTS);
-        glVertex2d(point.x, point.y);
+    glVertex2d(point.x, point.y);
     glEnd();
     glFlush();
 }
 
-void drawCircle(XPoint centre, int radius, Color fill_color, OpenGLColor fill_color_rgb, bool fill,
+void drawCircle(XPoint centre, int radius, Color fill_color, bool fill,
                 unsigned int line_width, int line_style, int cap_style,
                 int join_style, int function) {
     // @remove
@@ -297,46 +311,52 @@ void drawCircle(XPoint centre, int radius, Color fill_color, OpenGLColor fill_co
                                 GCLineStyle | GCCapStyle | GCJoinStyle,
                             &local_gc_vals);
     XSync(display, false);
-    XDrawArc(display, curr_d, local_gc, centre.x - new_radius, centre.y - new_radius,
-             new_radius * 2, new_radius * 2, 0, 23040);
+    XDrawArc(display, curr_d, local_gc, centre.x - new_radius,
+             centre.y - new_radius, new_radius * 2, new_radius * 2, 0, 23040);
     XSync(display, false);
     XFreeGC(display, local_gc);
 
     MakePositionOpenGLCompatible(centre);
     glLineWidth(line_width);
-    glColor3f(fill_color_rgb[0], fill_color_rgb[1], fill_color_rgb[2]);
-    // There is no 'direct way' to draw a circle in OpenGL, instead we draw a polygon with MANY sides (num_segments), such that it 'seems' that is a circle, that is no corner should be visible
-    int num_segments = 500; // approximate a circle by drawing num_segments sides of polygon, THIS MUST BE A LARGE VALUE, if too much large, then it will hit performance
+    glColor3b(fill_color.r, fill_color.g, fill_color.b);
+    // There is no 'direct way' to draw a circle in OpenGL, instead we draw a
+    // polygon with MANY sides (num_segments), such that it 'seems' that is a
+    // circle, that is no corner should be visible
+    int num_segments = 500; // approximate a circle by drawing num_segments
+                            // sides of polygon, THIS MUST BE A LARGE VALUE, if
+                            // too much large, then it will hit performance
 
     if (fill) {
         // For a filled circle, GL_TRIANGLE_FAN is the best way
         glBegin(GL_TRIANGLE_FAN);
-            glVertex2d(centre.x, centre.y);
-            for (int i=0; i<num_segments; i++) {
-                const auto angle = i*(2*PI/num_segments);  // angle 'wrt x-axis'
-                const auto x = radius * cos(angle);
-                const auto y = radius * sin(angle);
+        glVertex2d(centre.x, centre.y);
+        for (int i = 0; i < num_segments; i++) {
+            const auto angle =
+                i * (2 * PI / num_segments); // angle 'wrt x-axis'
+            const auto x = radius * cos(angle);
+            const auto y = radius * sin(angle);
 
-                // The `x` & `y` above is considering center at (0,0), so moving it to correct coordinates by moving center to (center.x, center.y)
-                glVertex2d(x + centre.x, y + centre.y);
-            }
+            // The `x` & `y` above is considering center at (0,0), so moving it
+            // to correct coordinates by moving center to (center.x, center.y)
+            glVertex2d(x + centre.x, y + centre.y);
+        }
         glEnd();
     } else {
         // For just the circumference, GL_LINE_LOOP is the best way in this API
         glBegin(GL_LINE_LOOP);
-            for (int i=0; i<num_segments; i++) {
-                const auto angle = i*(2*PI/num_segments);
-                const auto x = radius * cos(angle);
-                const auto y = radius * sin(angle);
+        for (int i = 0; i < num_segments; i++) {
+            const auto angle = i * (2 * PI / num_segments);
+            const auto x = radius * cos(angle);
+            const auto y = radius * sin(angle);
 
-                glVertex2d(x + centre.x, y + centre.y);
-            }
+            glVertex2d(x + centre.x, y + centre.y);
+        }
         glEnd();
     }
     glFlush();
 }
 
-void drawEllipse(XPoint centre, int width, int height, Color fill_color, OpenGLColor fill_color_rgb,
+void drawEllipse(XPoint centre, int width, int height, Color fill_color,
                  bool fill, unsigned int line_width, int line_style,
                  int cap_style, int join_style, int function) {
 
@@ -358,18 +378,19 @@ void drawEllipse(XPoint centre, int width, int height, Color fill_color, OpenGLC
     // TODO
 }
 
-void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color, OpenGLColor fill_color_rgb,
+void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
                  bool fill, unsigned int line_width, int line_style,
                  int cap_style, int join_style, int fill_rule, int function) {
 
-    // @remove - CAUTION: All these parameters should be supported as much as can
+    // @remove - CAUTION: All these parameters should be supported as much as
+    // can
     gc_vals.foreground = fill_color;
     gc_vals.line_width = line_width;
     gc_vals.fill_rule = fill_rule;
     XChangeGC(display, gc, GCForeground | GCLineWidth | GCFillRule, &gc_vals);
 
     glLineWidth(line_width);
-    glColor3f(fill_color_rgb[0], fill_color_rgb[1], fill_color_rgb[2]);
+    glColor3b(fill_color.r, fill_color.g, fill_color.b);
     if (fill) {
         // @remove
         XFillPolygon(display, curr_d, gc, points.data(), npoints, Complex,
@@ -472,10 +493,10 @@ char charFromEvent(XEvent &event) {
     return c;
 }
 
-void echoKey(XEvent &event, Color clr, OpenGLColor clr_rgb) {
+void echoKey(XEvent &event, Color clr) {
     char c = charFromEvent(event);
     int tw = XTextWidth(xfs, &c, 1);
-    drawText(event.xkey.x + tw / 2, event.xkey.y, string(1, c), clr, clr_rgb);
+    drawText(event.xkey.x + tw / 2, event.xkey.y, string(1, c), clr);
     XWarpPointer(display, None, None, 0, 0, 0, 0, tw, 0);
 }
 
@@ -497,14 +518,14 @@ int textDescent() { return xfs->descent; }
 //   drawText(p, text.c_str(), clr);
 // }
 
-void drawText(float x, float y, string text, Color clr, OpenGLColor clr_rgb) {
+void drawText(float x, float y, string text, Color clr) {
     XPoint p;
     p.x = x;
     p.y = y;
-    drawText(p, text.c_str(), clr, clr_rgb);
+    drawText(p, text.c_str(), clr);
 }
 
-void drawText(XPoint position, string message, Color clr, OpenGLColor clr_rgb) {
+void drawText(XPoint position, string message, Color clr) {
 
     XGCValues local_gc_vals;
     local_gc_vals.foreground = clr;
