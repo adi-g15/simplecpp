@@ -1,5 +1,11 @@
 # simplecpp
 
+This branch is for shifting the code to use OpenGL instead.
+
+## Currect State
+
+![](./state.png)
+
 **simplecpp** is a simple 2D graphics library in C++.
 It has very simple usage, with various examples in the `examples` directory.
 The linux version is currently based on X11.

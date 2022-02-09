@@ -47,7 +47,7 @@ void Circle::paint(Pose *p){
       s = pose.getScale();
     }
     drawEllipse(res_center, int(radius*2 * s), int(radius*2 * s),
-		color, fill);  // need x and y diameter 
+		color, colorRGB, fill);  // need x and y diameter 
   }
 }
 

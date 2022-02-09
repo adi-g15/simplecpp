@@ -16,6 +16,7 @@ class Sprite : public virtual SpriteInterface {
     Pose pose;
     bool visible;
     Color color;
+    OpenGLColor colorRGB = {0,1.0,0};
     bool fill;
     void init(Composite *owner);
     bool penIsDown;
@@ -50,6 +51,7 @@ class Sprite : public virtual SpriteInterface {
     virtual void moveTo(double x, double y, bool repaintP = true);
     virtual void print(string msg = "") { cout << msg << " Undefined.\n"; }
     Sprite &setColor(Color c, bool repaintP = true);
+    Sprite &setColor(OpenGLColor c, bool repaintP = true);
     void setFill(bool v = true, bool repaintP = true);
     void imprint(bool repaintP = true);
     virtual Position getOrigin() const { return pose.getOrigin(); }

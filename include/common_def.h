@@ -1,6 +1,9 @@
 #ifndef _COMMON_DEF_INCLUDED_
 #define _COMMON_DEF_INCLUDED_
 
+#include <GL/freeglut.h>
+#include <GL/freeglut_std.h>
+#include <array>
 #include <cmath>
 #include <iostream>
 
@@ -34,6 +37,24 @@ struct Position {
     }
 };
 
+// ONLY TO MAINTAIN COMPATIBILITY, previously since X11 was used, it's y coordinate is 0 at top and increases downwards.
+// While in OpenGL, y coordinate is 0 at bottom, and increases upwards
+// So changing y to be same as what would it be if top is y=0
+// @adi - Remove this once completely moved
+static void MakePositionOpenGLCompatible(Position& p) {
+    p.y = glutGet(GLUT_WINDOW_HEIGHT) - p.y;
+}
+// @adi - Remove this once completely moved
+static void MakePositionOpenGLCompatible(XPoint& p) {
+    p.y = glutGet(GLUT_WINDOW_HEIGHT) - p.y;
+}
+static void MakePositionOpenGLCompatible(int& y) {
+    y = glutGet(GLUT_WINDOW_HEIGHT) - y;
+}
+static void MakePositionOpenGLCompatible(short& y) {
+    y = glutGet(GLUT_WINDOW_HEIGHT) - y;
+}
+
 struct RectBox {
     Position top_left;
     Position bottom_right;
@@ -58,6 +79,8 @@ struct RectBox {
     }
 };
 
-typedef unsigned long Color;
+using Color = unsigned long;
+// primitive array (float[3]) cannot be assigned again (wholly)
+using OpenGLColor = array<float, 3>;
 } // namespace simplecpp
 #endif

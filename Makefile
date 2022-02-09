@@ -2,8 +2,10 @@ INCLUDES:= -Iinclude `pkg-config --cflags x11`
 LIBS:= `pkg-config --libs x11 glut glu`
 
 # include -g here, if debug build wanted
-# // TODO: REMOVE -g
-CXX_OPTS:= -g -Wall -std=c++11 -pedantic -Werror
+# TODO: REMOVE -g, and add -Wall
+CXX_OPTS:= -g -std=c++11 -pedantic -Werror
+
+# TODO: Shift to cmake
 
 OBJS =  src/canvas.o \
 		src/polygon.o \
@@ -44,7 +46,7 @@ default: $(OBJS) $(HDRS) s++
 	mkdir -p lib
 	ar rcs lib/libsprite.a $(OBJS)
 
-s++:
+s++: FORCE_RERUN
 	printf "#!/bin/sh\n" > s++
 	printf "if [ \"\$$1\" = \"\" ]; then\necho \"ERROR: No input file\"\nexit 1\nfi\n" >> s++
 	printf "g++ \$$@ -Wall -I/usr/local/include/simplecpp -L/usr/local/lib/simplecpp -lsprite `pkg-config --cflags --libs x11 glut glu`\n" >> s++
@@ -94,3 +96,8 @@ uninstall:
 
 clean:
 	rm src/*.o lib/*.a s++
+
+PREPARE_DEPS: ext/freeglut-3.2.2.tar.gz
+	tar --directory=ext -xf freeglut-3.2.2.tar.gz
+
+FORCE_RERUN:

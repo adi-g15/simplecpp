@@ -39,7 +39,7 @@ void Text::reset(double cx, double cy, double m){
 void Text::paint(Pose *p){
   if(visible){
     XPoint xp = (p ? Pose(*p,pose) : pose).prod(Position(0,0));
-    drawText(xp, message, color);
+    drawText(xp, message, color, colorRGB);
   }
 }
 

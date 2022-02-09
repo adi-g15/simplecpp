@@ -1,9 +1,7 @@
 #ifndef _TURTLE_INCLUDED_
 #define _TURTLE_INCLUDED_
 
-#include <common_def.h>
-#include <sprite.h>
-#include <vector>
+#include "polygon.h"
 
 using namespace std;
 

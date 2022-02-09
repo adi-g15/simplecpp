@@ -35,7 +35,7 @@ void Line::paint(Pose *p) {
         } else
             pose.compute_res_vertex(xpt, vertex, 2);
 
-        drawLine(xpt[0], xpt[1], color, (int)thickness);
+        drawLine(xpt[0], xpt[1], color, colorRGB, (int)thickness);
     }
 }
 

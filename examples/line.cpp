@@ -11,17 +11,19 @@ int main () {
     turtleSim("adi", 800, 600);
 	spriteStatus();
 
-    forward(20);
+    forward(100);
+
+    drawCircle({200,200}, 40, COLOR("red"), {1,0,0} /*red*/);
     
 	spriteStatus();
     glutCloseFunc([](){ std::cout << "Should close;"  << std::endl; });
 
-    glutDisplayFunc([](){});
-    glutMainLoopEvent();
+    // glutDisplayFunc([](){});
+    // glutMainLoopEvent();
 
     // Yes, past events are also captured by each MainLoopEvent
     std::this_thread::sleep_for(std::chrono::seconds(4));
-    glutMainLoopEvent();
+    // glutMainLoopEvent();
 
     getClick();
 	spriteStatus();

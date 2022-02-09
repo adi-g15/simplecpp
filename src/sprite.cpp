@@ -1,4 +1,7 @@
+#include "canvas.h"
+#include "common_def.h"
 #include "simplecpp"
+#include <array>
 
 namespace simplecpp {
 
@@ -19,6 +22,7 @@ Sprite &Sprite::operator=(const Sprite &other) {
     pose = other.pose;
     visible = other.visible;
     color = other.color;
+    colorRGB = other.colorRGB;
     fill = other.fill;
     penIsDown = other.penIsDown;
     return *this;
@@ -26,7 +30,7 @@ Sprite &Sprite::operator=(const Sprite &other) {
 
 Sprite::Sprite(const Sprite &other)
     : z_index(other.z_index), pose(other.pose), visible(other.visible),
-      color(other.color), fill(other.fill), penIsDown(other.penIsDown) {
+      color(other.color), colorRGB(other.colorRGB), fill(other.fill), penIsDown(other.penIsDown) {
     // if(owner != nullptr) owner->addPart(this);
     // else               // will not work with Composite.
     addSprite(this); // Register to canvas
@@ -35,6 +39,7 @@ Sprite::Sprite(const Sprite &other)
 void Sprite::init(Composite *owner) {
     visible = true;
     color = COLOR("black");
+    colorRGB = {0.0, 0.0, 0.0};
     fill = false;
     penIsDown = false;
     z_index = ++max_z_index;
@@ -98,6 +103,15 @@ void Sprite::setFill(bool v, bool repaintP) {
         repaint();
 }
 
+// @remove
+Sprite &Sprite::setColor(OpenGLColor c, bool repaintP) {
+    colorRGB = c;
+    if ( repaintP )
+        repaint();
+    return *this;
+}
+
+// @remove
 Sprite &Sprite::setColor(Color c, bool repaintP) {
     color = c;
     if (repaintP)
@@ -115,6 +129,7 @@ void Sprite::forward(double distance) {
     Position image = pose.unitX();
     double xshift = image.getX() * distance;
     double yshift = image.getY() * distance;
+    cout << xshift << ", " << yshift << endl;
     move(xshift, yshift);
 }
 

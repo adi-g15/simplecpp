@@ -37,7 +37,7 @@ void Polygon::paint(Pose *p) {
             r.compute_res_vertex(xpt_vertex, vertex, vertex.size());
         } else
             pose.compute_res_vertex(xpt_vertex, vertex, vertex.size());
-        drawPolygon(xpt_vertex, vertex.size(), color, fill);
+        drawPolygon(xpt_vertex, vertex.size(), color, colorRGB, fill);
     }
 }
 } // namespace simplecpp

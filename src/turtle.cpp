@@ -12,6 +12,7 @@ Turtle::Turtle(Composite *owner) {
     glColor3f(1.0f, 0.0f, 0.0f);
     // @remove
     setColor(COLOR("red"), false);
+    setColor({1,0,0} /*red*/, false);
 
     setFill();
     penDown();
