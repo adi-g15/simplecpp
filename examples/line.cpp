@@ -1,22 +1,21 @@
-#include "canvas.h"
 #include <GL/freeglut.h>
 #include <GL/freeglut_ext.h>
 #include <chrono>
-#include <simplecpp>
 #include <iostream>
+#include <simplecpp>
 #include <thread>
 
-int main () {
-	spriteStatus();
+int main() {
+    spriteStatus();
     turtleSim("adi", 800, 600);
-	spriteStatus();
+    spriteStatus();
 
     forward(100);
 
-    drawCircle({200,200}, 40, COLOR("red"), {1,0,0} /*red*/);
-    
-	spriteStatus();
-    glutCloseFunc([](){ std::cout << "Should close;"  << std::endl; });
+    drawCircle({200, 200}, 40, COLOR("red"), {1, 0, 0} /*red*/);
+
+    spriteStatus();
+    glutCloseFunc([]() { std::cout << "Should close;" << std::endl; });
 
     // glutDisplayFunc([](){});
     // glutMainLoopEvent();
@@ -26,5 +25,5 @@ int main () {
     // glutMainLoopEvent();
 
     getClick();
-	spriteStatus();
+    spriteStatus();
 }

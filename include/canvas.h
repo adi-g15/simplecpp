@@ -1,6 +1,7 @@
 #ifndef _CANVAS_INCLUDED
 #define _CANVAS_INCLUDED
 
+#include <GL/freeglut_std.h>
 #include <string>
 #include <vector>
 
@@ -9,7 +10,16 @@
 
 using std::string;
 
-namespace simplecpp {
+// @WARN Do NOT use these, only for compatiblity purpose with sir's code in examples
+static int canvas_width() {
+    return glutGet(GLUT_SCREEN_WIDTH);
+}
+
+static int canvas_height() {
+    return glutGet(GLUT_SCREEN_HEIGHT);
+}
+
+namespace simplecpp {    
 double randuv(double u, double v);
 //  void srand(unsigned int);
 void wait(float duration);
