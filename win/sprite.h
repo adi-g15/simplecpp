@@ -23,10 +23,10 @@ class Sprite : public virtual SpriteInterface{
  public:
   Sprite( const Sprite& other );
   Sprite& operator=(const Sprite&);
-  Sprite(Composite* owner = NULL);
-  Sprite(double dx, double dy, Composite* owner = NULL);
+  Sprite(Composite* owner = nullptr);
+  Sprite(double dx, double dy, Composite* owner = nullptr);
   virtual ~Sprite();
-  void reset(double dx, double dy, Composite* owner = NULL);
+  void reset(double dx, double dy, Composite* owner = nullptr);
 
   virtual void forward(double distance);
   virtual void penDown(bool=true);
@@ -44,7 +44,7 @@ class Sprite : public virtual SpriteInterface{
   }
   virtual double getScale() const { return pose.getScale(); }
 
-  virtual void paint(Pose *p=NULL){};
+  virtual void paint(Pose *p=nullptr){};
   virtual void show();
   virtual void hide();
   virtual void rotate(double angle);

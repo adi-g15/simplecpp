@@ -12,7 +12,7 @@
 
 using namespace std;
 
-Display *display = NULL; // A connection to X server
+Display *display = nullptr; // A connection to X server
 
 // Basic information
 int screen_number;
@@ -71,7 +71,7 @@ namespace simplecpp{
 
   int initCanvas(const char window_title[], int width, int height){
 
-    display = XOpenDisplay(NULL);    // Connect X server by opening a display
+    display = XOpenDisplay(nullptr);    // Connect X server by opening a display
     //display = XOpenDisplay("localhost:11.0");    // Connect X server by opening a display
 
     if(!display){
@@ -99,7 +99,7 @@ namespace simplecpp{
 					WhitePixel(display, screen_number));
 
     XSetStandardProperties(display, canvas_window, window_title,
-			   window_title, None, NULL, 0, NULL);
+			   window_title, None, nullptr, 0, nullptr);
 
     XSelectInput(display, canvas_window, 
 		 ExposureMask|ButtonPressMask|ButtonReleaseMask|KeyPressMask|
@@ -176,7 +176,7 @@ namespace simplecpp{
 
     XCloseDisplay(display);
 
-    display = NULL;
+    display = nullptr;
     spriteSet.clear();    // Delete all elements from set
   }
 

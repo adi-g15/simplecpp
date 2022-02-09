@@ -1,23 +1,24 @@
 #ifndef _TEXT_INCLUDED_
 #define _TEXT_INCLUDED_
 
-#include <sprite.h>
-#include <canvas.h>
+#include "canvas.h"
+#include "sprite.h"
 
-namespace simplecpp{
-class Text : public Sprite{
- protected:
-  string message;
- public:
-  Text(double cx, double cy, string m, Composite* owner=NULL);
-  Text(double cx, double cy, double n, Composite* owner=NULL);
-  Text(Composite* owner=NULL);
-  //  void init(double cx, double cy, string m);
-  void reset(double cx, double cy, string m);
-  //  void init(double cx, double cy, double m);
-  void reset(double cx, double cy, double m);
-  void setMessage(string s);
-  void paint(Pose* p=NULL);
+namespace simplecpp {
+class Text : public Sprite {
+  protected:
+    string message;
+
+  public:
+    Text(double cx, double cy, string m, Composite *owner = nullptr);
+    Text(double cx, double cy, double n, Composite *owner = nullptr);
+    Text(Composite *owner = nullptr);
+    //  void init(double cx, double cy, string m);
+    void reset(double cx, double cy, string m);
+    //  void init(double cx, double cy, double m);
+    void reset(double cx, double cy, double m);
+    void setMessage(string s);
+    void paint(Pose *p = nullptr);
 };
-}
+} // namespace simplecpp
 #endif

@@ -39,7 +39,7 @@ struct Position{
   double GetYDistance(){
     return y;
   }
-  void print(char *msg = NULL){cout << msg <<": "<< x <<", "<< y<<endl;}
+  void print(char *msg = nullptr){cout << msg <<": "<< x <<", "<< y<<endl;}
 };
 
 struct RectBox{

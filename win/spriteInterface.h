@@ -12,7 +12,7 @@ class Sprite;
 class SpriteInterface{
  public:
   //  Sprite& operator=(const Sprite&){cout << "Copying.\n"; return *this;}
-  void reset(double dx, double dy, Composite* owner = NULL);
+  void reset(double dx, double dy, Composite* owner = nullptr);
 
   virtual void forward(double distance)=0;
   virtual void penDown(bool=true)=0;
@@ -21,7 +21,7 @@ class SpriteInterface{
   virtual void right(double Dangle)=0;
 
 
-  virtual void paint(Pose *p=NULL)=0;
+  virtual void paint(Pose *p=nullptr)=0;
   virtual void show()=0;
   virtual void hide()=0;
   virtual void rotate(double angle)=0;

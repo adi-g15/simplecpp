@@ -2,12 +2,12 @@
 
 namespace simplecpp{
 Rectangle::Rectangle(Composite* owner)
-  : Polygon(0,0,NULL,0,owner){
+  : Polygon(0,0,nullptr,0,owner){
   init(0,0,0,0);
 }
 
 Rectangle::Rectangle(double cx, double cy, double w, double h, Composite* owner)
-  : Polygon(cx, cy, NULL, 0, owner){
+  : Polygon(cx, cy, nullptr, 0, owner){
   init(cx,cy,w,h);
 }
 

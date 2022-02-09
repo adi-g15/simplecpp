@@ -1,7 +1,10 @@
+#include <queue>
+
 #include "sim.h"
 
-namespace simplecpp{
+namespace simplecpp {
 
 double sim::time = 0;
-priority_queue< sim::ETpair, vector<sim::ETpair>, sim::compareETpair> sim::pq;
-}
+std::priority_queue<sim::ETpair, vector<sim::ETpair>, sim::compareETpair>
+    sim::pq;
+} // namespace simplecpp

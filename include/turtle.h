@@ -11,7 +11,7 @@ namespace simplecpp{
 class Turtle : public Polygon{
 
 public:
-  Turtle(Composite* owner=NULL);
+  Turtle(Composite* owner=nullptr);
 };
 }
 

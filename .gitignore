@@ -64,3 +64,5 @@ pkg/
 *.tgz
 *-pak
 *.deb
+.cache
+compile_commands.json

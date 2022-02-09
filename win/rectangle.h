@@ -9,10 +9,10 @@ class Rectangle : public Polygon{
  protected:
   double width, height;
  public:
-  Rectangle(double cx, double cy, double w, double h=-1, Composite* owner=NULL);
-  Rectangle(Composite* owner=NULL);
-  void init(double cx, double cy, double w, double h=-1, Composite* owner=NULL);
-  void reset(double cx, double cy, double w, double h=-1, Composite* owner=NULL);
+  Rectangle(double cx, double cy, double w, double h=-1, Composite* owner=nullptr);
+  Rectangle(Composite* owner=nullptr);
+  void init(double cx, double cy, double w, double h=-1, Composite* owner=nullptr);
+  void reset(double cx, double cy, double w, double h=-1, Composite* owner=nullptr);
   double getWidth();
   double getHeight();
 };

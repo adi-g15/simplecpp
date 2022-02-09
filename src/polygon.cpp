@@ -2,7 +2,7 @@
 
 namespace simplecpp{
 Polygon::Polygon(Composite* owner): Sprite(0,0,owner) {
-  init(canvas_width()/2, canvas_height()/2, NULL, 0, owner);
+  init(canvas_width()/2, canvas_height()/2, nullptr, 0, owner);
 }
 
 Polygon::Polygon(const double x, const double y, const double points[][2], 
