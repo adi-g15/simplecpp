@@ -3,19 +3,19 @@ all: MAKE_LIBRARY kaladarshan.prog line.prog petals.prog raagmalaa.prog rotating
 # giving extension .prog to just make it easy to delete all 'easily' with make clean
 
 kaladarshan.prog: kaladarshan.cpp
-	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs x11 glut glu) -o $@
+	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs glut glu) -o $@
 
 line.prog: line.cpp
-	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs x11 glut glu) -o $@
+	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs glut glu) -o $@
 
 petals.prog: petals.cpp
-	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs x11 glut glu) -o $@
+	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs glut glu) -o $@
 
 raagmalaa.prog: raagmalaa.cpp
-	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs x11 glut glu) -o $@
+	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs glut glu) -o $@
 
 rotatingSquares.old.prog: rotatingSquares.old.cpp
-	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs x11 glut glu) -o $@
+	g++ -g $< -I../include -L../lib -lsprite $(shell pkg-config --cflags --libs glut glu) -o $@
 
 clean:
 	rm -rf *.prog

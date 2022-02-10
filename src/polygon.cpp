@@ -1,11 +1,9 @@
+#include "canvas.h"
 #include <simplecpp>
-
-extern int window_width;
-extern int window_height;
 
 namespace simplecpp {
 Polygon::Polygon(Composite *owner) : Sprite(0, 0, owner) {
-    init(window_width / 2.0f, window_height / 2.0f, nullptr, 0, owner);
+    init(canvas_width() / 2.0f, canvas_height() / 2.0f, nullptr, 0, owner);
 }
 
 Polygon::Polygon(const double x, const double y, const double points[][2],

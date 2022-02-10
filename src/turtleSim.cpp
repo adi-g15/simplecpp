@@ -1,7 +1,6 @@
+#include "canvas.h"
 #include "simplecpp"
-
-extern int window_width;
-extern int window_height;
+#include "turtleSim.h"
 
 Turtle *_PsystemTurtle_;
 
@@ -14,15 +13,19 @@ void check(const char *msg) {
 
 namespace simplecpp {
 
-void turtleSim(const char *name, int w, int h, bool is_centered) {
-    initCanvas(name, w, h, is_centered);
+void turtleSim(int w, int h) {
+    return turtleSim("Turtle Simulator", w, h);
+}
+
+void turtleSim(const std::string& name, int w, int h, bool is_centered) {
+    initCanvas(name.c_str(), w, h, is_centered);
     _PsystemTurtle_ = new Turtle;
 }
 
 void closeTurtleSim() { closeCanvas(); }
 
 void resetTurtle() {
-    _PsystemTurtle_->Sprite::reset(window_width / 2.0f, window_height / 2.0f);
+    _PsystemTurtle_->Sprite::reset(canvas_width() / 2.0f, canvas_height() / 2.0f);
 }
 
 void hide(bool state) {

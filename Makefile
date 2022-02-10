@@ -1,9 +1,9 @@
-INCLUDES:= -Iinclude `pkg-config --cflags x11`
-LIBS:= `pkg-config --libs x11 glut glu`
+INCLUDES:= -Iinclude `pkg-config --cflags glut glu`
+LIBS:= `pkg-config --libs glut glu`
 
 # include -g here, if debug build wanted
-# TODO: REMOVE -g, and add -Wall
-CXX_OPTS:= -g -std=c++11 -pedantic -Werror
+# TODO: REMOVE -g
+CXX_OPTS:= -g -std=c++11 -pedantic -Werror #-O2 -Wall -DREMOVE_DEPRECATED
 
 # TODO: Shift to cmake
 

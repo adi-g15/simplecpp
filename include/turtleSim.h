@@ -1,12 +1,16 @@
 #ifndef _TURTLESIM_INCLUDED
 #define _TURTLESIM_INCLUDED
 
+#include <string>
+
 #ifndef PI
 #define PI 3.14159265358979323846
 #endif
 
 namespace simplecpp{
-  void turtleSim(const char* name="Turtle Simulator", int w=-1, int h=-1, bool is_centered = true);
+  // Created 2 overloads for convinience, replacing const char* with const string& to prevent 'bad' bugs, for eg. turtleSim(NULL, 100); matching the wrong one
+  void turtleSim(const std::string& name="Turtle Simulator", int w=-1, int h=-1, bool is_centered = true);
+  void turtleSim(int w=-1, int h=-1);
   void closeTurtleSim();
   void resetTurtle();
 

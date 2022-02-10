@@ -8,7 +8,7 @@
 
 struct erase {
     static void spiral(Color clr = COLOR("white")) {
-        Rectangle r(canvas_width() / 2, canvas_height() / 2, 0, 0);
+        Rectangle r(canvas_width() / 2.0f, canvas_height() / 2.0f, 0, 0);
         r.setFill();
         r.setColor(clr);
         for (int i = 1; i <= 72; i++) {
@@ -103,36 +103,56 @@ struct erase {
 };
 
 int main(int argc, char **argv) {
+	cout << "1\n";
+	spriteStatus();
 
     turtleSim("Raagmaalaa", 1000, 800); // big canvas
     hide();
     saraswati();
     getClick();
+	cout << "2\n";
+	spriteStatus();
 
     erase::droplets(COLOR("blue"));
+	cout << "3\n";
+	spriteStatus();
 
     resetTurtle();
     hide(false);
     plate();
     getClick();
+	cout << "4\n";
+	spriteStatus();
 
     erase::bars(COLOR("yellow"));
+	cout << "5\n";
+	spriteStatus();
 
     resetTurtle();
     hide();
     rotSquares();
     getClick();
+	cout << "6\n";
+	spriteStatus();
 
     erase::spiral(COLOR("pink"));
     resetTurtle();
     hide();
+	cout << "7\n";
+	spriteStatus();
 
     realtree();
+	cout << "8\n";
+	spriteStatus();
 
     erase::squeeze(COLOR("green"));
     chakra();
+	cout << "9\n";
+	spriteStatus();
 
     anar();
+	cout << "10\n";
+	spriteStatus();
 
     getClick();
 }

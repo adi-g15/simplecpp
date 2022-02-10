@@ -43,7 +43,7 @@ void rotSquares() {
 }
 
 int main() {
-  turtleSim();
+  turtleSim("Simplecpp", 800,600);
   rotSquares();
 
   getClick();

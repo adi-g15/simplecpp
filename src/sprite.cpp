@@ -26,6 +26,7 @@ Sprite &Sprite::operator=(const Sprite &other) {
     color = other.color;
     fill = other.fill;
     penIsDown = other.penIsDown;
+    // TODO: Yaha bhi addSprite hona tha kya ?
     return *this;
 }
 
