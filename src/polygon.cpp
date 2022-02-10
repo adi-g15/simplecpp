@@ -1,11 +1,11 @@
 #include <simplecpp>
 
-extern int screen_width;
-extern int screen_height;
+extern int window_width;
+extern int window_height;
 
 namespace simplecpp {
 Polygon::Polygon(Composite *owner) : Sprite(0, 0, owner) {
-    init(screen_width / 2.0f, screen_height / 2.0f, nullptr, 0, owner);
+    init(window_width / 2.0f, window_height / 2.0f, nullptr, 0, owner);
 }
 
 Polygon::Polygon(const double x, const double y, const double points[][2],

@@ -39,6 +39,7 @@ Sprite::Sprite(const Sprite &other)
 
 void Sprite::init(Composite *owner) {
     visible = true;
+    // @adi This shouldn't be black by default, lekin rehne de
     color = COLOR("black");
     fill = false;
     penIsDown = false;
@@ -120,7 +121,9 @@ void Sprite::forward(double distance) {
     Position image = pose.unitX();
     double xshift = image.getX() * distance;
     double yshift = image.getY() * distance;
-    cout << xshift << ", " << yshift << endl;
+    // @adig - BREAKING BACKWARD COMPATIBILITY, I think this is only for
+    // debugging purposes
+    // cout << xshift << ", " << yshift << endl;
     move(xshift, yshift);
 }
 

@@ -52,6 +52,7 @@ void petals() {
 }
 
 int main() {
+  initCanvas();
   petals();
 
   getClick();

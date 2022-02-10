@@ -21,7 +21,6 @@ void Star::init(double m, V3 r1, V3 v1, string clr, double rad) {
     v = v1;
     image.reset(r.getx(), r.gety(), rad);
     image.setColor(COLOR(clr.c_str()));
-    image.setColor({1,0,0} /*red*/);
     image.setFill(true);
     image.penDown();
 }

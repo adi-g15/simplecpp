@@ -34,7 +34,7 @@ struct erase {
                 r[i].reset(canvas_width() / 2.0,
                            canvas_height() / 10.0 * (i + 0.5), canvas_width(),
                            canvas_height() / 10.0 / 10 * t);
-            wait(0.1);
+            wait(0.3);
             endFrame();
         }
         for (int i = 0; i < 10; i++) {
@@ -123,16 +123,16 @@ int main(int argc, char **argv) {
     rotSquares();
     getClick();
 
-    // erase::spiral(COLOR("pink"));
-    // resetTurtle();
-    // hide();
+    erase::spiral(COLOR("pink"));
+    resetTurtle();
+    hide();
 
     realtree();
 
-    // erase::squeeze(COLOR("green"));
-    // chakra();
+    erase::squeeze(COLOR("green"));
+    chakra();
 
-    // anar();
+    anar();
 
     getClick();
 }

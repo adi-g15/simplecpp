@@ -12,9 +12,9 @@ using std::string;
 
 // @WARN Do NOT use these, only for compatiblity purpose with sir's code in
 // examples
-static int canvas_width() { return glutGet(GLUT_SCREEN_WIDTH); }
+static int canvas_width() { return glutGet(GLUT_WINDOW_WIDTH); }
 
-static int canvas_height() { return glutGet(GLUT_SCREEN_HEIGHT); }
+static int canvas_height() { return glutGet(GLUT_WINDOW_HEIGHT); }
 
 namespace simplecpp {
 double randuv(double u, double v);
@@ -22,8 +22,9 @@ double randuv(double u, double v);
 void wait(float duration);
 void abort();
 
-int initCanvas(const char window_title[] = "Simplecpp Canvas", int w = 500,
-               int h = 500);
+// @adig Changed default width and height to dynamically
+int initCanvas(const char window_title[] = "Simplecpp Canvas", int w = -1,
+               int h = -1, bool is_centered = true);
 // creates the graphics window
 
 void closeCanvas();
@@ -48,12 +49,12 @@ void imprintLine(short x1, short y1, short x2, short y2,
 /* draw... : draw ... onto the current buffer. */
 
 void drawLine(XPoint start, XPoint end, Color line_color,
-              unsigned int line_width = 0);
+              unsigned int line_width = 1);
 
 void drawPoint(XPoint point, Color point_color, int function = GXcopy);
 
 void drawCircle(XPoint centre, int radius, Color fill_color, bool fill = true,
-                unsigned int line_width = 0, int line_style = LineSolid,
+                unsigned int line_width = 1, int line_style = LineSolid,
                 int cap_style = CapButt, int join_style = JoinMiter,
                 int function = GXcopy);
 
@@ -63,7 +64,7 @@ void drawEllipse(XPoint centre, int width, int height, Color fill_color,
                  int join_style = JoinMiter, int function = GXcopy);
 
 void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
-                 bool fill = true, unsigned int line_width = 0,
+                 bool fill = true, unsigned int line_width = 1,
                  int line_style = LineSolid, int cap_style = CapButt,
                  int join_style = JoinMiter, int fill_rule = WindingRule,
                  int function = GXcopy);

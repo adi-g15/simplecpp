@@ -1,7 +1,7 @@
 #include "simplecpp"
 
-extern int screen_width;
-extern int screen_height;
+extern int window_width;
+extern int window_height;
 
 Turtle *_PsystemTurtle_;
 
@@ -14,15 +14,15 @@ void check(const char *msg) {
 
 namespace simplecpp {
 
-void turtleSim(const char *name, int w, int h) {
-    initCanvas(name, w, h);
+void turtleSim(const char *name, int w, int h, bool is_centered) {
+    initCanvas(name, w, h, is_centered);
     _PsystemTurtle_ = new Turtle;
 }
 
 void closeTurtleSim() { closeCanvas(); }
 
 void resetTurtle() {
-    _PsystemTurtle_->Sprite::reset(screen_width / 2.0f, screen_height / 2.0f);
+    _PsystemTurtle_->Sprite::reset(window_width / 2.0f, window_height / 2.0f);
 }
 
 void hide(bool state) {

@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <X11/Xlib.h>
+#include <ostream>
 
 using namespace std;
 
@@ -88,6 +89,7 @@ struct RectBox {
 using u8 = uint8_t;
 
 struct Color {
+    // NOTE: To directly pass these values to OpenGL, use glColor3ub, not any other, glColor3b or 3i etc. (they take different range of values)
     u8 r = 127;
     u8 g = 127;
     u8 b = 127;
@@ -96,7 +98,19 @@ struct Color {
 
     // For backward compatibility with X APIs
     operator unsigned long() { return r << 16 | g << 8 | b; }
+
 };
+
+    // For printing color component values with cout, etc
+    inline std::ostream& operator<<(std::ostream& s, Color& clr) {
+        s << "Colour: {" << int(clr.r) << ", " << int(clr.g) << ", " << int(clr.b) << "}";
+        return s;
+    }
+    // For printing point coord with cout, etc
+    inline std::ostream& operator<<(std::ostream& s, XPoint& pnt) {
+        s << "Point: {" << int(pnt.x) << ", " << int(pnt.y) << "}";
+        return s;
+    }
 
 } // namespace simplecpp
 #endif

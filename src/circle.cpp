@@ -1,3 +1,4 @@
+#include "canvas.h"
 #include <simplecpp>
 
 namespace simplecpp {
@@ -46,8 +47,7 @@ void Circle::paint(Pose *p) {
             res_center = pose.prod(Position(0, 0));
             s = pose.getScale();
         }
-        drawEllipse(res_center, int(radius * 2 * s), int(radius * 2 * s), color,
-                    fill); // need x and y diameter
+        drawCircle(res_center, radius * s, color, fill);
     }
 }
 

@@ -3,8 +3,8 @@
 #include <GL/gl.h>
 #include <simplecpp>
 
-extern int screen_width;
-extern int screen_height;
+extern int window_width;
+extern int window_height;
 
 namespace simplecpp {
 Turtle::Turtle(Composite *owner) {
@@ -12,6 +12,6 @@ Turtle::Turtle(Composite *owner) {
     setColor(COLOR("red"), false);
     setFill();
     penDown();
-    reset(screen_width / 2.0f, screen_height / 2.0f, pts_body, 4, owner);
+    reset(window_width / 2.0f, window_height / 2.0f, pts_body, 4, owner);
 }
 } // namespace simplecpp

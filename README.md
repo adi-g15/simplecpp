@@ -2,6 +2,11 @@
 
 This branch is for shifting the code to use OpenGL instead.
 
+> TODOS:
+> 
+> * There are A LOT of unnecessary repaints, for eg. when setColor is used etc., for eg. Rectangle ko dekh
+> * Handle window resizes
+
 ## Currect State
 
 ![](./state.png)

@@ -1,4 +1,6 @@
 #include <GL/freeglut.h>
+#include <GL/freeglut_ext.h>
+#include <GL/freeglut_std.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <cctype>
@@ -22,9 +24,11 @@ using namespace std;
 Display *display = nullptr; // A connection to X server
 
 // Basic information
+// Draw* routines should not require info about the complete screen (ie.
+// laptop/PC screen), instead need the current window's dimensions
 int screen_number;
-int screen_width;
-int screen_height;
+int window_width;
+int window_height;
 
 Window canvas_window;
 
@@ -68,12 +72,11 @@ void wait(float duration) {
         std::chrono::seconds(static_cast<long>(duration)));
 }
 
-int initCanvas(const char window_title[], int width, int height) {
+int initCanvas(const char window_title[], int width, int height, bool is_centered) {
 
     int argc = 0;
     char **argv = {};
-    // Calling glutGet for GLUT_INIT_STATE is safe, even before any glutInit
-    // calls
+    // Calling glutGet for GLUT_INIT_STATE is safe, even before glutInit
     bool already_init = glutGet(GLUT_INIT_STATE) != 0;
     if (!already_init) {
         glutInit(&argc, argv);
@@ -85,20 +88,33 @@ int initCanvas(const char window_title[], int width, int height) {
 
     // @remove
     display = XOpenDisplay(nullptr); // Connect X server by opening a display
-
-    // @remove
     screen_number = DefaultScreen(display);
 
-    // @remove
+    cout << "Screen width: " << glutGet(GLUT_SCREEN_WIDTH) << endl;
+    cout << "Screen height: " << glutGet(GLUT_SCREEN_HEIGHT) << endl;
+    // Default is a 8:5 aspect ratio window
     if (width == -1) {
-        screen_width = (DisplayWidth(display, screen_number) - 100);
-        screen_height = (DisplayHeight(display, screen_number) - 100);
-    } else {
-        screen_width = width;
-        screen_height = height;
+        width = glutGet(GLUT_SCREEN_WIDTH) / 4;
+
+        // @Originally
+        // window_width = (DisplayWidth(display, screen_number) - 100);
+        // window_height = (DisplayHeight(display, screen_number) - 100);
+    }
+    if (height == -1) {
+        height = 2 * glutGet(GLUT_SCREEN_HEIGHT) / 5;
     }
 
-    glutInitWindowSize(screen_width, screen_height);
+    // Start in center
+    Position top_left(0,0);
+    
+    if( is_centered ) {
+        top_left.x = (glutGet(GLUT_SCREEN_WIDTH) - width) / 2.0f;
+        top_left.y = (glutGet(GLUT_SCREEN_HEIGHT) - height) / 2.0f;
+    }
+
+    glutInitWindowSize(width, height);
+    glutInitWindowPosition(top_left.x, top_left.y);
+    glViewport(0, 0, width, height);
 
     if (!already_init) {
         if (glutCreateWindow(window_title) == 0) {
@@ -109,6 +125,7 @@ int initCanvas(const char window_title[], int width, int height) {
         // Already init, instead of creating a new window, set properties on
         // existing itself
         glutSetWindowTitle(window_title);
+        glutReshapeWindow(width, height);
         glClearColor(1, 1, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
     }
@@ -116,13 +133,22 @@ int initCanvas(const char window_title[], int width, int height) {
     { // Initialise
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        gluOrtho2D(0, 800, 0, 600);
+        gluOrtho2D(0, width, 0, height);
+
+        // I want smoother lines and polygons, so enable aliasing
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_POLYGON_SMOOTH);
+
+        // Not equating to `width` and `height`, let glut say what it thinks is the
+        // window size
+        window_width = glutGet(GLUT_WINDOW_WIDTH);
+        window_height = glutGet(GLUT_WINDOW_HEIGHT);
     }
     // @remove
     canvas_window = XCreateSimpleWindow(
         display, RootWindow(display, screen_number), 0,
         0, // left top corner.  doesnt work.
-        screen_width, screen_height, 1, BlackPixel(display, screen_number),
+        width, height, 1, BlackPixel(display, screen_number),
         WhitePixel(display, screen_number));
     XSetStandardProperties(display, canvas_window, window_title, window_title,
                            None, nullptr, 0, nullptr);
@@ -144,7 +170,8 @@ int initCanvas(const char window_title[], int width, int height) {
         return 2; // ERROR CODE 2: gc error
     }
 
-    // @replace
+    // Use fonts: GLUT_BITMAP_9_BY_15 or GLUT_BITMAP_HELVETICA_18
+    // @remove
     xfs = XLoadQueryFont(display, "-*-helvetica-bold-r-normal-*-24-*");
     if (!xfs) {
         xfs = XLoadQueryFont(display, "fixed");
@@ -155,32 +182,26 @@ int initCanvas(const char window_title[], int width, int height) {
 
     // @remove
     cmap = DefaultColormap(display, screen_number);
-    // @replace - Flush all events to X server and wait
     XSync(display, False);
-
-    // @remove
     screenBG =
-        XCreatePixmap(display, canvas_window, screen_width, screen_height,
+        XCreatePixmap(display, canvas_window, window_width, window_height,
                       XDefaultDepth(display, screen_number));
-
-    // @remove
     wait(0.1);
     XSync(display, False);
     screenTmp =
-        XCreatePixmap(display, canvas_window, screen_width, screen_height,
+        XCreatePixmap(display, canvas_window, window_width, window_height,
                       XDefaultDepth(display, screen_number));
     curr_d = canvas_window;
+    Rectangle r(window_width / 2.0, window_height / 2.0, window_width,
+                window_height);
+    r.setColor(COLOR("white"));
+    r.setFill();
+    r.imprint();
 
     // @adi This should be repeated on each render
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    // @remove
-    Rectangle r(screen_width / 2.0, screen_height / 2.0, screen_width,
-                screen_height);
-    r.setColor(COLOR("white"));
-    r.setFill();
-    r.imprint();
+    glFlush();
 
     return 0;
 }
@@ -198,6 +219,7 @@ void closeCanvas() {
 
 void drawLine(XPoint start, XPoint end, Color line_color,
               unsigned int line_width) {
+    // cout << "Going to draw: " << __func__ << line_color << endl;
 
     // @remove
     gc_vals.foreground = line_color;
@@ -207,8 +229,11 @@ void drawLine(XPoint start, XPoint end, Color line_color,
 
     MakePositionOpenGLCompatible(start);
     MakePositionOpenGLCompatible(end);
+    if (line_width == 0) {
+        line_width = 1;
+    }
     glLineWidth(line_width);
-    glColor3b(line_color.r, line_color.g, line_color.b);
+    glColor3ub(line_color.r, line_color.g, line_color.b);
     // Draw line
     glBegin(GL_LINES);
     glVertex2d(start.x, start.y);
@@ -235,7 +260,7 @@ void imprintLine(short x1, short y1, short x2, short y2, Color line_color,
     MakePositionOpenGLCompatible(y1);
     MakePositionOpenGLCompatible(y2);
     glLineWidth(line_width);
-    glColor3b(line_color.r, line_color.g, line_color.b);
+    glColor3ub(line_color.r, line_color.g, line_color.b);
     // Draw line from (x1,y1) to (x2,y2)
     glBegin(GL_LINES);
     glVertex2d(x1, y1);
@@ -252,7 +277,8 @@ Color COLOR(const char *color_string) {
         c = tolower(c);
     }
 
-    // TODO: Add more common colors here, for example see ncurses colours
+    // Colors supported by ncurses, these are the 8 ANSI colors, there are no 'standard' names for other colors
+    // Ref: man page - curs_color(3x)
     if (s == "red") {
         return {255, 0, 0};
     } else if (s == "green") {
@@ -263,6 +289,12 @@ Color COLOR(const char *color_string) {
         return {255, 255, 255};
     } else if (s == "black") {
         return {0, 0, 0};
+    } else if (s == "yellow") {
+        return {255, 255, 0};
+    } else if (s == "magenta") {
+        return {255, 0, 255};
+    } else if (s == "cyan") {
+        return {0, 255, 255};
     } else {
         cout << "Warning: Don't know the colour: " << color_string << '\n';
         return {127, 127, 127}; /*DEFAULT_COLOR*/
@@ -274,6 +306,8 @@ Color COLOR(unsigned int red, unsigned int green, unsigned int blue) {
 }
 
 void drawPoint(XPoint point, Color point_color, int function) {
+    // cout << "Going to draw: " << __func__ << point_color << endl;
+    // cout << "Data: " << __func__ << point << endl;
     // @remove
     gc_vals.foreground = point_color;
     XChangeGC(display, gc, GCForeground, &gc_vals);
@@ -282,7 +316,7 @@ void drawPoint(XPoint point, Color point_color, int function) {
     XSync(display, false);
 
     MakePositionOpenGLCompatible(point);
-    glColor3b(point_color.r, point_color.g, point_color.b);
+    glColor3ub(point_color.r, point_color.g, point_color.b);
     // Draw point (point.x, point.y)
     glBegin(GL_POINTS);
     glVertex2d(point.x, point.y);
@@ -293,6 +327,9 @@ void drawPoint(XPoint point, Color point_color, int function) {
 void drawCircle(XPoint centre, int radius, Color fill_color, bool fill,
                 unsigned int line_width, int line_style, int cap_style,
                 int join_style, int function) {
+    // cout << "Going to draw: " << __func__ << fill_color << endl;
+    // cout << "Data: " << __func__ << "; Center: " << centre
+    //      << "; Radius: " << radius << endl;
     // @remove
     int new_radius = radius;
     if (fill) {
@@ -318,19 +355,20 @@ void drawCircle(XPoint centre, int radius, Color fill_color, bool fill,
 
     MakePositionOpenGLCompatible(centre);
     glLineWidth(line_width);
-    glColor3b(fill_color.r, fill_color.g, fill_color.b);
+    glColor3ub(fill_color.r, fill_color.g, fill_color.b);
     // There is no 'direct way' to draw a circle in OpenGL, instead we draw a
     // polygon with MANY sides (num_segments), such that it 'seems' that is a
     // circle, that is no corner should be visible
     int num_segments = 500; // approximate a circle by drawing num_segments
                             // sides of polygon, THIS MUST BE A LARGE VALUE, if
                             // too much large, then it will hit performance
+                            // 500 and 10,000 both give same result on my laptop
 
     if (fill) {
         // For a filled circle, GL_TRIANGLE_FAN is the best way
         glBegin(GL_TRIANGLE_FAN);
         glVertex2d(centre.x, centre.y);
-        for (int i = 0; i < num_segments; i++) {
+        for (int i = 0; i < num_segments +1 /*+1 required else the circle will not be drawn completely*/; i++) {
             const auto angle =
                 i * (2 * PI / num_segments); // angle 'wrt x-axis'
             const auto x = radius * cos(angle);
@@ -359,6 +397,7 @@ void drawCircle(XPoint centre, int radius, Color fill_color, bool fill,
 void drawEllipse(XPoint centre, int width, int height, Color fill_color,
                  bool fill, unsigned int line_width, int line_style,
                  int cap_style, int join_style, int function) {
+    // cout << "Going to draw: " << __func__ << fill_color << endl;
 
     gc_vals.foreground = fill_color;
     gc_vals.line_width = line_width;
@@ -381,6 +420,7 @@ void drawEllipse(XPoint centre, int width, int height, Color fill_color,
 void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
                  bool fill, unsigned int line_width, int line_style,
                  int cap_style, int join_style, int fill_rule, int function) {
+    // cout << "Going to draw: " << __func__ << fill_color << endl;
 
     // @remove - CAUTION: All these parameters should be supported as much as
     // can
@@ -390,7 +430,7 @@ void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
     XChangeGC(display, gc, GCForeground | GCLineWidth | GCFillRule, &gc_vals);
 
     glLineWidth(line_width);
-    glColor3b(fill_color.r, fill_color.g, fill_color.b);
+    glColor3ub(fill_color.r, fill_color.g, fill_color.b);
     if (fill) {
         // @remove
         XFillPolygon(display, curr_d, gc, points.data(), npoints, Complex,
@@ -454,14 +494,17 @@ void endFrame() {
 }
 
 void repaint() {
+    // GLUT will optimise repeated calls too, so no need for globalRepaintFlag
+    glutPostRedisplay();
+
+    // @remove
     if (!display) {
         cout << "Repaint: You must first call initCanvas before "
              << "using any graphics features.\n";
         exit(1);
     }
-
     if (globalRepaintFlag) {
-        int tl_x = 0, tl_y = 0, width = screen_width, height = screen_height;
+        int tl_x = 0, tl_y = 0, width = window_width, height = window_height;
         XCopyArea(display, screenBG, screenTmp, gc, tl_x, tl_y, width, height,
                   tl_x, tl_y);
 
@@ -512,13 +555,8 @@ int textWidth(string text) {
 int textHeight() { return xfs->ascent + xfs->descent; }
 int textDescent() { return xfs->descent; }
 
-// void drawText(Position position, string text, Color clr){
-//   XPoint p;
-//   p.x = position.getX(); p.y = position.getY();
-//   drawText(p, text.c_str(), clr);
-// }
-
 void drawText(float x, float y, string text, Color clr) {
+    // cout << "Going to draw: " << __func__ << clr << endl;
     XPoint p;
     p.x = x;
     p.y = y;
@@ -526,33 +564,28 @@ void drawText(float x, float y, string text, Color clr) {
 }
 
 void drawText(XPoint position, string message, Color clr) {
+    // cout << "Going to draw: " << __func__ << clr << endl;
 
+    // @remove
     XGCValues local_gc_vals;
     local_gc_vals.foreground = clr;
     local_gc_vals.font = xfs->fid;
-
-    // Create gc for current drawable
     GC local_gc =
         XCreateGC(display, curr_d, GCForeground | GCFont, &local_gc_vals);
-
     char *cstr = new char[message.size() + 1];
     strcpy(cstr, message.c_str());
-
     XTextItem ti;
     ti.chars = cstr;
     ti.nchars = strlen(cstr);
     ti.delta = 0;
     ti.font = None;
-
     XSync(display, false);
-
     XDrawText(display, curr_d, local_gc, position.x - textWidth(message) / 2,
               position.y + textHeight() / 2 - textDescent(), &ti, 1);
-
     XSync(display, false);
-
-    // Free temporary GC
     XFreeGC(display, local_gc);
+
+    glutBitmapString(GLUT_BITMAP_HELVETICA_18, (const unsigned char*)message.c_str());
 }
 
 void spriteStatus() {

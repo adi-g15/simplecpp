@@ -6,7 +6,7 @@
 #endif
 
 namespace simplecpp{
-  void turtleSim(const char* name="Turtle Simulator", int w=500, int h=500);
+  void turtleSim(const char* name="Turtle Simulator", int w=-1, int h=-1, bool is_centered = true);
   void closeTurtleSim();
   void resetTurtle();
 

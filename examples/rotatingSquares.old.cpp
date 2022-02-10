@@ -1,3 +1,4 @@
+#include "turtleSim.h"
 #include <simplecpp>
 
 double pts_body[4][2] = {{-50, -50}, {-50, 50}, {50, 50}, {50, -50}};
@@ -42,6 +43,7 @@ void rotSquares() {
 }
 
 int main() {
+  turtleSim();
   rotSquares();
 
   getClick();
