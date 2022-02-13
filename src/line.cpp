@@ -1,3 +1,4 @@
+#include <GL/gl.h>
 #include <simplecpp>
 
 extern int window_height;
@@ -36,6 +37,8 @@ void Line::paint(Pose *p) {
             pose.compute_res_vertex(xpt, vertex, 2);
 
         drawLine(xpt[0], xpt[1], color, (int)thickness);
+        glFlush();
+        glutMainLoopEvent();
     }
 }
 

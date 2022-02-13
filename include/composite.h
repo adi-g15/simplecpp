@@ -1,5 +1,6 @@
 #ifndef _COMPOSITE_INCLUDED_
 #define _COMPOSITE_INCLUDED_
+#include <GL/gl.h>
 #include <vector>
 
 #include "pose.h"
@@ -7,7 +8,7 @@
 
 namespace simplecpp {
 class Composite : public Sprite {
-    vector<Sprite*> parts;
+    vector<Sprite *> parts;
 
   public:
     Composite(double x, double y, Composite *owner) : Sprite(x, y, owner) {}
@@ -23,6 +24,9 @@ class Composite : public Sprite {
                     parts[i]->paint(&pose);
                 }
             }
+
+            glFlush();
+            glutMainLoopEvent();
         }
     }
 };

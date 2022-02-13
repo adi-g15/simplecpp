@@ -1,4 +1,5 @@
 #include "canvas.h"
+#include <GL/gl.h>
 #include <simplecpp>
 
 namespace simplecpp {
@@ -48,6 +49,8 @@ void Circle::paint(Pose *p) {
             s = pose.getScale();
         }
         drawCircle(res_center, radius * s, color, fill);
+        glFlush();
+        glutMainLoopEvent();
     }
 }
 

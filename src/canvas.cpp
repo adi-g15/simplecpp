@@ -1,4 +1,6 @@
 #include <GL/freeglut.h>
+#include <GL/freeglut_ext.h>
+#include <GL/freeglut_std.h>
 #include <GL/gl.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -20,8 +22,8 @@
 
 using namespace std;
 
-#ifndef REMOVE_DEPRECATED
 static SpriteManager __sprite_mgr;
+#ifndef REMOVE_DEPRECATED
 struct LtSprite {
     bool operator()(const Sprite *s1, const Sprite *s2) const {
         return s1->getZIndex() < s2->getZIndex();
@@ -75,6 +77,18 @@ int initCanvas(const char window_title[], int width, int height,
         top_left.y = (screen_height - height) / 2.0f;
     }
 
+    // Observation:
+    // Composite objects with too many are the problem
+
+    // Incompletes:
+    // SpriteManager
+
+    // Optimisations:
+    // 1. Don't glFlush everywhere
+    // 2. Double buffered windows are MUCH MUCH faster
+    // 3. Using Vertex Buffer Objects, instead of sending each point individually is faster
+
+    // glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(width, height);
     glutInitWindowPosition(top_left.x, top_left.y);
     glViewport(0, 0, width, height);
@@ -100,6 +114,18 @@ int initCanvas(const char window_title[], int width, int height,
         glEnable(GL_POLYGON_SMOOTH);
     }
 
+    glutCloseFunc([]() { std::cout << "Should close;" << std::endl; });
+    glutReshapeFunc([](int w, int h){
+        cout << "Reshaped to " << w << "x" << h << endl;
+
+        glViewport(0, 0, w, h);
+        glMatrixMode(GL_PROJECTION_MATRIX);
+        glLoadIdentity();
+        gluOrtho2D(0, w, 0, h);
+
+        glutPostRedisplay();
+    });
+
     glutDisplayFuncUcall(
         [](void *sm) {
             auto *sprite_manager = (SpriteManager *)sm;
@@ -108,10 +134,15 @@ int initCanvas(const char window_title[], int width, int height,
         },
         &__sprite_mgr);
 
+    __sprite_mgr.init();
+
     // @adi This should be repeated on each render
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     glFlush();
+
+    // Only to handle reshape event
+    glutMainLoopEvent();
 
     return 0;
 }
@@ -127,7 +158,6 @@ void imprintLine(short x1, short y1, short x2, short y2, Color line_color,
     glVertex2d(x1, y1);
     glVertex2d(x2, y2);
     glEnd();
-    glFlush();
 }
 
 Color COLOR(const char *color_string) {
@@ -180,7 +210,6 @@ void drawPointNew(Position point, Color point_color,
     glBegin(GL_POINTS);
     glVertex2d(point.x, point.y);
     glEnd();
-    glFlush();
 }
 
 void drawLineNew(Position start, Position end, Color line_color,
@@ -199,7 +228,7 @@ void drawLineNew(Position start, Position end, Color line_color,
     glVertex2d(start.x, start.y);
     glVertex2d(end.x, end.y);
     glEnd();
-    glFlush();
+    // glFlush();
 }
 
 void drawCircleNew(Position centre, int radius, Color fill_color, bool fill,
@@ -223,7 +252,7 @@ void drawEllipseNew(Position centre, int rx, int ry, Color fill_color,
     MakePositionOpenGLCompatible(centre);
     glLineWidth(line_width);
     glColor3ub(fill_color.r, fill_color.g, fill_color.b);
-    int num_segments = 500; // approximate a circle by drawing num_segments
+    int num_segments = 100; // approximate a circle by drawing num_segments
                             // sides of polygon, THIS MUST BE A LARGE VALUE, if
                             // too much large, then it will hit performance
                             // 500 and 10,000 both give same result on my laptop
@@ -264,7 +293,7 @@ void drawEllipseNew(Position centre, int rx, int ry, Color fill_color,
         }
         glEnd();
     }
-    glFlush();
+    // glFlush();
 }
 
 void drawPolygonNew(vector<Position> &points, Color fill_color, bool fill,
@@ -293,16 +322,16 @@ void drawPolygonNew(vector<Position> &points, Color fill_color, bool fill,
         glEnd();
     }
 
-    glFlush();
+    // glFlush();
 }
 
 bool globalRepaintFlag = true;
 void beginFrame() { globalRepaintFlag = false; }
 void endFrame() {
-    // TODO: Use these to prevent any repaint during periods these have been
-    // called
+    glutSwapBuffers();
     globalRepaintFlag = true;
     repaint();
+    glutSwapBuffers();
 }
 
 void repaintNew() {
@@ -326,6 +355,7 @@ void drawText(float x, float y, string text, Color clr,
 }
 
 uint32_t getClick() {
+    glFlush();
     int click_coords[2] = {-1, -1};
 
     /**
@@ -438,11 +468,11 @@ void removeSprite(Sprite *t) {
 }
 void c_imprint(Sprite *s) { s->paint(); }
 void repaint() {
-    // TODO: Verify
     if (globalRepaintFlag) {
         for (auto iter = spriteSet.begin(); iter != spriteSet.end(); iter++) {
             (*iter)->paint();
         }
+        glFlush();
     }
 }
 
@@ -464,7 +494,7 @@ bool keyPressEvent(XEvent &event) { return event.type == KeyPress; }
 bool mouseDragEvent(XEvent &event) { return event.type == MotionNotify; }
 bool mouseButtonPressEvent(XEvent &event) { return event.type == ButtonPress; }
 bool mouseButtonReleaseEvent(XEvent &event) {return event.type == ButtonRelease;}
-bool checkEvent(XEvent &event, Display* display = nullptr) { if (XCheckMaskEvent(display, ButtonReleaseMask | ButtonPressMask | KeyPressMask, &event)) return true; return false; }
+bool checkEvent(XEvent &event, Display* display = nullptr) {throw std::logic_error("Removed, all X-based functionality is removed");}
 // clang-format on
 #endif
 } // namespace simplecpp

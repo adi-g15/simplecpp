@@ -1,5 +1,5 @@
 INCLUDES:= -Iinclude `pkg-config --cflags glut glu`
-LIBS:= `pkg-config --libs glut glu`
+LIBS:= `pkg-config --libs glut glu` -lpthread
 
 # include -g here, if debug build wanted
 # TODO: REMOVE -g

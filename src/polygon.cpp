@@ -1,4 +1,5 @@
 #include "canvas.h"
+#include <GL/gl.h>
 #include <simplecpp>
 
 namespace simplecpp {
@@ -36,6 +37,8 @@ void Polygon::paint(Pose *p) {
         } else
             pose.compute_res_vertex(xpt_vertex, vertex, vertex.size());
         drawPolygon(xpt_vertex, vertex.size(), color, fill);
+        glFlush();
+        glutMainLoopEvent();
     }
 }
 } // namespace simplecpp

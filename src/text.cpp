@@ -1,3 +1,4 @@
+#include <GL/gl.h>
 #include <simplecpp>
 #include <sstream>
 
@@ -37,6 +38,8 @@ void Text::paint(Pose *p) {
     if (visible) {
         XPoint xp = (p ? Pose(*p, pose) : pose).prod(Position(0, 0));
         drawText(xp, message, color);
+        glFlush();
+        glutMainLoopEvent();
     }
 }
 

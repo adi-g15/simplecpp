@@ -1,8 +1,9 @@
 #ifndef _CANVAS_INCLUDED
 #define _CANVAS_INCLUDED
 
-#include <GL/freeglut_std.h>
+#include <GL/freeglut.h>
 #include <X11/Xlib.h>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -27,6 +28,9 @@ inline int canvas_height() { return glutGet(GLUT_WINDOW_HEIGHT); }
 namespace simplecpp {
 
 // @adi Isko abhi ke liye ignore kr
+// Some runtime contentions are intentionally ignored, for eg. writing to
+// is_running, while another thread is reading from it, this is okay, even if
+// reader gets old value one extra is looping is not a problem in this case
 class SpriteManager {
     // Not using std::unique_ptr, it requires C++14, i dont want to change the
     // dependency on compiler
@@ -35,20 +39,37 @@ class SpriteManager {
                  // all draw* routines prints at same z-index, so the first ones
                  // are the ones with lowest priority, they can be overriden by
                  // others)
+
     std::mutex
         _vec_mutex; // this is not "that costly", since sprites_vec_optimiser
                     // doesn't run always, so most times 'locking' will be just
                     // setting a boolean, atleast on Linux since it uses futexes
+
+    std::vector<Sprite*> imprinted_sprites;
+    std::vector<Sprite*> movable_sprites;   // temporary sprites, may change location
 
     // only print when the state is dirty, this is not altered anyway by
     // sprites_vec_optimiser
     int dirty_writes; // this is okay being single-threaded, since only the
                       // application should use this
 
-    // https://stackoverflow.com/questions/23703661/how-to-get-a-pointer-types-pointed-type
+    bool is_running;
+    std::thread* pollEventsThread;
 
   public:
-    SpriteManager() : dirty_writes(0) {}
+    SpriteManager()
+        : dirty_writes(0), is_running(true) {}
+
+    void init() {
+	pollEventsThread = new std::thread([&]() {
+        // Cannot call glut functions in multi-threaded app
+              while (this->is_running) {
+                //   glutMainLoopEvent();
+                  std::this_thread::sleep_for(
+                      std::chrono::milliseconds(1000 / 2 /*2 fps*/));
+              }
+          });
+    }
 
     // Merge same shapes, no need to find 'covered' shapes for now
     void spritesVecOptimiser();
@@ -60,6 +81,11 @@ class SpriteManager {
         for (auto &ptr : this->sprites) {
             delete ptr;
         }
+        is_running = false;
+        if (pollEventsThread->joinable()) {
+            pollEventsThread->join();
+        }
+	delete pollEventsThread;
     }
 };
 
@@ -122,15 +148,20 @@ void endFrame();   // resume painting.  reset flag.
 
   @adi - Think about implementing these in OpenGL, without XEvent
 */
-void nextEvent(XEvent &event, Display* display = nullptr);      // wait for an event: mouseclick, keypress.
+void nextEvent(
+    XEvent &event,
+    Display *display = nullptr);    // wait for an event: mouseclick, keypress.
 bool mouseDragEvent(XEvent &event); // true if event is drag
 bool keyPressEvent(XEvent &event);
 bool mouseButtonPressEvent(XEvent &event);
 bool mouseButtonReleaseEvent(XEvent &event);
-char charFromEvent(XEvent &event, Display* display = nullptr); // return char whose key was pressed.
+char charFromEvent(
+    XEvent &event,
+    Display *display = nullptr); // return char whose key was pressed.
 bool checkEvent(
     XEvent &event); // true if some event happened since last nextEvent.
-void echoKey(XEvent &event, Color clr = COLOR("blue"), Display* display = nullptr); // print value on screen
+void echoKey(XEvent &event, Color clr = COLOR("blue"),
+             Display *display = nullptr); // print value on screen
 void spriteStatus();
 
 /*
@@ -139,23 +170,42 @@ void spriteStatus();
 
    @dev-notes - `line_style` can also be implemented in OpenGL easily
 */
-inline void drawPoint(XPoint point, Color point_color, int function = GXcopy) { drawPointNew(Position(point.x,point.y), point_color); }
+inline void drawPoint(XPoint point, Color point_color, int function = GXcopy) {
+    drawPointNew(Position(point.x, point.y), point_color);
+}
 inline void drawLine(XPoint start, XPoint end, Color line_color,
-              unsigned int line_width = 1) { drawLineNew(Position(start.x, start.y), Position(end.x, end.y), line_color, line_width); }
-inline void drawCircle(XPoint centre, int radius, Color fill_color, bool fill = true,
-                unsigned int line_width = 1, int line_style = LineSolid,
-                int cap_style = CapButt, int join_style = JoinMiter,
-                int function = GXcopy) { drawCircleNew(Position(centre.x, centre.y), radius, fill_color, fill, line_width); }
+                     unsigned int line_width = 1) {
+    drawLineNew(Position(start.x, start.y), Position(end.x, end.y), line_color,
+                line_width);
+}
+inline void drawCircle(XPoint centre, int radius, Color fill_color,
+                       bool fill = true, unsigned int line_width = 1,
+                       int line_style = LineSolid, int cap_style = CapButt,
+                       int join_style = JoinMiter, int function = GXcopy) {
+    drawCircleNew(Position(centre.x, centre.y), radius, fill_color, fill,
+                  line_width);
+}
 inline void drawEllipse(XPoint centre, int width, int height, Color fill_color,
-                 bool fill = true, unsigned int line_width = 1,
-                 int line_style = LineSolid, int cap_style = CapButt,
-                 int join_style = JoinMiter, int function = GXcopy) { drawEllipseNew(Position(centre.x, centre.y), width, height, fill_color, fill, line_width); }
+                        bool fill = true, unsigned int line_width = 1,
+                        int line_style = LineSolid, int cap_style = CapButt,
+                        int join_style = JoinMiter, int function = GXcopy) {
+    drawEllipseNew(Position(centre.x, centre.y), width, height, fill_color,
+                   fill, line_width);
+}
 inline void drawPolygon(vector<XPoint> &points, int npoints, Color fill_color,
-                 bool fill = true, unsigned int line_width = 1,
-                 int line_style = LineSolid, int cap_style = CapButt,
-                 int join_style = JoinMiter, int fill_rule = WindingRule,
-                 int function = GXcopy) { vector<Position> pnts; for (auto &p : points) { pnts.push_back(Position(p.x, p.y)); } drawPolygonNew(pnts, fill_color, fill, line_width); }
-inline void drawText(XPoint position, string message, Color clr) { drawTextNew(Position(position.x, position.y), message, clr); }
+                        bool fill = true, unsigned int line_width = 1,
+                        int line_style = LineSolid, int cap_style = CapButt,
+                        int join_style = JoinMiter, int fill_rule = WindingRule,
+                        int function = GXcopy) {
+    vector<Position> pnts;
+    for (auto &p : points) {
+        pnts.push_back(Position(p.x, p.y));
+    }
+    drawPolygonNew(pnts, fill_color, fill, line_width);
+}
+inline void drawText(XPoint position, string message, Color clr) {
+    drawTextNew(Position(position.x, position.y), message, clr);
+}
 #endif
 
 } // namespace simplecpp
